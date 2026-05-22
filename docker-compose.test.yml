@@ -1,0 +1,26 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    working_dir: /var/www/html
+    volumes:
+      - ./nexora-app:/var/www/html
+      - vendor_data:/var/www/html/vendor
+    env_file:
+      - ./nexora-app/.env.testing
+    environment:
+      APP_ENV: testing
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: nexora_test
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - nexora
+    command: php artisan test
+    profiles:
+      - test

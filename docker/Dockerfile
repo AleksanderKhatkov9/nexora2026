@@ -4,6 +4,8 @@ WORKDIR /var/www/html
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
         git \
         unzip \
         libzip-dev \
@@ -17,11 +19,16 @@ RUN apt-get update \
         zip \
         exif \
         pcntl \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN usermod -u 1000 www-data && groupmod -g 1000 www-data
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh \
+    && usermod -u 1000 www-data \
+    && groupmod -g 1000 www-data
 
-CMD ["php-fpm"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

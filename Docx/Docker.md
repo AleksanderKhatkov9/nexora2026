@@ -32,6 +32,12 @@ d:\D\Progrmmer\Project\Docker\Nexora
 
 ## 3. Настройка .env
 
+Если файла `nexora-app/.env` нет, создать его из примера:
+
+```powershell
+Copy-Item nexora-app\.env.example nexora-app\.env
+```
+
 В файле `nexora-app/.env` должны быть указаны настройки подключения к базе данных:
 
 ```env
@@ -85,6 +91,36 @@ http://localhost/
 
 ```powershell
 docker compose exec app composer install
+```
+
+## 5.1. Сборка фронтенда (Vite + Vue)
+
+В контейнере `app` установлены Node.js и npm. При первом запуске, если нет `public/build/manifest.json`, выполняется `npm install` и `npm run build` автоматически.
+
+Пересобрать фронтенд вручную после изменений в `resources/js` или `resources/css`:
+
+```powershell
+docker compose exec app npm run build
+```
+
+Режим разработки с hot-reload (запускать в отдельном терминале):
+
+```powershell
+docker compose exec app npm run dev
+```
+
+Если сборка падает из-за пустого `node_modules`, переустановить зависимости:
+
+```powershell
+docker compose exec app sh -c "rm -rf node_modules && npm ci && npm run build"
+```
+
+Сборка на хосте (если установлен Node.js 20+):
+
+```powershell
+cd nexora-app
+npm install
+npm run build
 ```
 
 ## 6. Команды Laravel
@@ -350,4 +386,14 @@ docker compose exec app php artisan db:seed
 
 ```
 
+
+## 14. Пересборка проекта Vue 
+```powershell
+docker compose exec app npm run build
+```
+
+## 15. Очистка кеша 
+
+```powershell
 docker compose exec app php artisan optimize:clear
+```

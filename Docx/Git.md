@@ -197,3 +197,9 @@ fetch/pull  ←  origin (GitHub)
      ↓
    main
 ```
+
+---
+
+## См. также
+
+- [GitHub.md](./GitHub.md) — промпты для Cursor/ИИ и работа с GitHub

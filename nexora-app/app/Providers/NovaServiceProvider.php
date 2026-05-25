@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Models\User;
 use App\Nova\Dashboards\Main;
 use App\Nova\User as NovaUser;
+use App\Nova\Order as NovaOrder;
 use App\Nova\Page as NovaPage;
+use App\Nova\Project as NovaProject;
 use App\Nova\Tags as NovaTags;
 use App\Nova\UserRole;
 use Illuminate\Http\Request;
@@ -34,11 +36,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(UserRole::class),
                 ])->icon('squares-2x2')->collapsable(),
 
-                MenuSection::make('Resources_Pages', [
+                MenuSection::make('Контент', [
                     MenuItem::resource(NovaPage::class),
                     MenuItem::resource(NovaTags::class),
-            
-                ])->icon('squares-2x2')->collapsable(),
+                    MenuItem::resource(NovaProject::class),
+                    MenuItem::resource(NovaOrder::class),
+                ])->icon('document-text')->collapsable(),
 
             ];
         });

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ProjectTag extends Model
+class ProjectTag extends Pivot
 {
-    use HasFactory;
+    protected $table = 'project_tags';
+
+    public $incrementing = false;
+
     protected $fillable = [
         'project_id',
         'tag_id',
@@ -20,6 +23,6 @@ class ProjectTag extends Model
 
     public function tag(): BelongsTo
     {
-        return $this->belongsTo(Tag::class);
+        return $this->belongsTo(Tags::class, 'tag_id');
     }
 }

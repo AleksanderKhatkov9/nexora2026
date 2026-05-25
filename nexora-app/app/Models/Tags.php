@@ -4,18 +4,28 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Tags extends Model
 {
     use HasFactory;
+
+    protected $table = 'tags';
 
     protected $fillable = [
         'name',
         'slug',
     ];
 
-    public function projects(): HasMany
+    public function projects(): BelongsToMany
     {
-        return $this->hasMany(Project::class);
+        return $this->belongsToMany(Project::class, 'project_tags', 'tag_id', 'project_id')
+            ->withTimestamps();
+    }
+
+    public function pages(): BelongsToMany
+    {
+        return $this->belongsToMany(Page::class, 'page_tags', 'tag_id', 'page_id')
+            ->withTimestamps();
     }
 }

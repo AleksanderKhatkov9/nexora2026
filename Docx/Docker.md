@@ -396,4 +396,5 @@ docker compose exec app npm run build
 
 ```powershell
 docker compose exec app php artisan optimize:clear
+docker compose exec -T app php artisan migrate:fresh --seed --force
 ```

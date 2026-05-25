@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Trix;
@@ -34,8 +35,18 @@ class Page extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'title', 'slug',
     ];
+
+    public static function label(): string
+    {
+        return 'Страницы';
+    }
+
+    public static function singularLabel(): string
+    {
+        return 'Страница';
+    }
 
     /**
      * Get the fields displayed by the resource.
@@ -55,7 +66,10 @@ class Page extends Resource
                 ->path('pages')
                 ->nullable(),
             Text::make('Link', 'link')->nullable(),
-            Boolean::make('Active', 'active'), 
+            Boolean::make('Active', 'active'),
+
+            BelongsToMany::make('Теги', 'tags', Tags::class),
+
             Text::make('SEO Title', 'seo_title')->nullable(),
             Textarea::make('SEO Description', 'seo_description')->nullable(),
             Text::make('SEO Keywords', 'seo_keywords')->nullable(),

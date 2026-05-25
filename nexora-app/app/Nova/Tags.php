@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\DateTime;
@@ -33,6 +34,16 @@ class Tags extends Resource
         'id', 'name', 'slug',
     ];
 
+    public static function label(): string
+    {
+        return 'Теги';
+    }
+
+    public static function singularLabel(): string
+    {
+        return 'Тег';
+    }
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -44,6 +55,10 @@ class Tags extends Resource
             ID::make()->sortable(),
             Text::make('Name', 'name')->rules('required', 'max:255'),
             Text::make('Slug', 'slug')->rules('required', 'max:255'),
+
+            BelongsToMany::make('Проекты', 'projects', Project::class),
+            BelongsToMany::make('Страницы', 'pages', Page::class),
+
             DateTime::make('Created At', 'created_at')->sortable()->exceptOnForms(),
             DateTime::make('Updated At', 'updated_at')->sortable()->exceptOnForms(),
         ];

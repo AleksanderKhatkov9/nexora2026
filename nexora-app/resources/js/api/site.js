@@ -8,6 +8,16 @@ export async function fetchPricingPage() {
     return data.data;
 }
 
+export async function fetchNavigation() {
+    const { data } = await window.axios.get('/api/page/navigation');
+    return data.data;
+}
+
+export async function fetchPageBySlug(slug) {
+    const { data } = await window.axios.get(`/api/page/${slug}`);
+    return data.data;
+}
+
 export async function fetchProjectsPortfolio(tag = null) {
     const params = tag && tag !== 'all' ? { tag } : {};
     const { data } = await window.axios.get('/api/projects', { params });

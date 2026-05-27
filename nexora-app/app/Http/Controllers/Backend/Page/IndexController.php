@@ -41,4 +41,22 @@ class IndexController extends Controller
 
         return response()->json(['data' => $data], 200);
     }
+
+    public function navigation(): JsonResponse
+    {
+        return response()->json([
+            'data' => $this->pageService->getNavigationData(),
+        ], 200);
+    }
+
+    public function show(string $slug): JsonResponse
+    {
+        $data = $this->pageService->getPageBySlug($slug);
+
+        if (! $data) {
+            return response()->json(['message' => 'Page not found'], 404);
+        }
+
+        return response()->json(['data' => $data], 200);
+    }
 }

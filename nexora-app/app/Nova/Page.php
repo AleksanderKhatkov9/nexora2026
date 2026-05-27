@@ -3,12 +3,15 @@
 namespace App\Nova;
 
 use App\Nova\Filters\ActiveStatus;
+use App\Models\Page as PageModel;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
+use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -61,9 +64,35 @@ class Page extends Resource
                 ->path('pages')
                 ->nullable(),
 
-            Text::make('Ссылка', 'link')->nullable()->hideFromIndex(),
+            Text::make('Ссылка', 'link')
+                ->nullable()
+                ->hideFromIndex()
+                ->help('Для типа «Внешняя ссылка» — полный URL'),
 
             Boolean::make('Активна', 'active'),
+
+            Boolean::make('В меню', 'show_in_menu'),
+
+            Number::make('Порядок в меню', 'menu_order')
+                ->min(0)
+                ->default(0)
+                ->hideFromIndex(),
+
+            Text::make('Подпись в меню', 'menu_label')
+                ->nullable()
+                ->hideFromIndex()
+                ->help('Если пусто — используется название страницы'),
+
+            Select::make('Тип пункта меню', 'menu_type')
+                ->options(PageModel::MENU_TYPES)
+                ->default(PageModel::MENU_TYPE_ROUTE)
+                ->displayUsingLabels()
+                ->hideFromIndex(),
+
+            Text::make('Якорь (#секция)', 'menu_hash')
+                ->nullable()
+                ->hideFromIndex()
+                ->help('Для типа «Якорь на главной», например: #services'),
 
             BelongsToMany::make('Теги', 'tags', Tags::class),
 

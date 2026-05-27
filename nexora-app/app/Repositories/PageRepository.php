@@ -16,6 +16,17 @@ class PageRepository implements PageRepositoryInterface
             ->get();
     }
 
+    public function getNavigationItems(int $limit = 50): Collection
+    {
+        return Page::query()
+            ->where('active', true)
+            ->where('show_in_menu', true)
+            ->orderBy('menu_order')
+            ->orderBy('id')
+            ->limit($limit)
+            ->get();
+    }
+
     public function getActiveBySlug(string $slug): ?Page
     {
         return Page::query()

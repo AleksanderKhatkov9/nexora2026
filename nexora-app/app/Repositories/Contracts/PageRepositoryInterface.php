@@ -8,5 +8,7 @@ interface PageRepositoryInterface
 {
     public function getAllActive(int $limit = 200): Collection;
 
+    public function getNavigationItems(int $limit = 50): Collection;
+
     public function getActiveBySlug(string $slug): ?\App\Models\Page;
 }

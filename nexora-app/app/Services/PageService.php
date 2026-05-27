@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\PageNavResource;
 use App\Http\Resources\PageResource;
 use App\Repositories\Contracts\PageRepositoryInterface;
 
@@ -26,6 +27,24 @@ class PageService
     public function getPricingData(): ?array
     {
         return $this->getPageDataBySlug('pricing');
+    }
+
+    public function getNavigationData(): array
+    {
+        return PageNavResource::collection(
+            $this->pageRepository->getNavigationItems()
+        )->resolve();
+    }
+
+    public function getPageBySlug(string $slug): ?array
+    {
+        $page = $this->pageRepository->getActiveBySlug($slug);
+
+        if (! $page || $page->isNavOnly()) {
+            return null;
+        }
+
+        return (new PageResource($page))->resolve();
     }
 
     private function getPageDataBySlug(string $slug): ?array

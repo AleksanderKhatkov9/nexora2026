@@ -3,6 +3,7 @@ import IndexPage from './components/Page/IndexPage.vue';
 import ProjectsPage from './components/Page/ProjectsPage.vue';
 import ProjectViewPage from './components/Page/ProjectViewPage.vue';
 import PricingPage from './components/Page/PricingPage.vue';
+import GenericPage from './components/Page/GenericPage.vue';
 
 const routes = [
     {
@@ -20,14 +21,16 @@ const routes = [
         name: 'projects',
         component: ProjectsPage,
     },
-
     {
         path: '/projects/page/:id',
         name: 'projects.view',
         component: ProjectViewPage,
     },
-
-    
+    {
+        path: '/:slug',
+        name: 'page',
+        component: GenericPage,
+    },
 ];
 
 export default createRouter({

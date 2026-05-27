@@ -1,38 +1,53 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { inject, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
-const props = defineProps({
-    homeUrl: { type: String, default: '/' },
-    projectsUrl: { type: String, default: '/projects' },
+defineProps({
     faviconUrl: { type: String, default: '/favicon.svg' },
-    loginUrl: { type: String, default: '' },
-    dashboardUrl: { type: String, default: '/nova' },
-    isAuthenticated: { type: Boolean, default: false },
 });
 
+const navigation = inject('navigation', []);
 const route = useRoute();
 const mobileMenuOpen = ref(false);
-
-const authLink = computed(() => {
-    if (props.isAuthenticated) {
-        return { href: props.dashboardUrl, label: 'Панель' };
-    }
-
-    if (props.loginUrl) {
-        return { href: props.loginUrl, label: 'Вход' };
-    }
-
-    return null;
-});
 
 const closeMobileMenu = () => {
     mobileMenuOpen.value = false;
 };
 
-const homeSection = (hash) => {
-    const cleanHash = hash.startsWith('#') ? hash : `#${hash}`;
-    return { name: 'home', hash: cleanHash };
+const navLinkTo = (item) => {
+    if (item.type === 'anchor') {
+        return { name: 'home', hash: item.hash };
+    }
+
+    if (item.type === 'external') {
+        return item.external_url;
+    }
+
+    if (item.route_name === 'page') {
+        return { name: 'page', params: { slug: item.slug } };
+    }
+
+    return { name: item.route_name };
+};
+
+const isNavActive = (item) => {
+    if (item.type === 'anchor') {
+        return route.name === 'home' && route.hash === item.hash;
+    }
+
+    if (item.type === 'external') {
+        return false;
+    }
+
+    if (item.route_name === 'projects') {
+        return route.name === 'projects' || route.name === 'projects.view';
+    }
+
+    if (item.route_name === 'page') {
+        return route.name === 'page' && route.params.slug === item.slug;
+    }
+
+    return route.name === item.route_name;
 };
 </script>
 
@@ -46,27 +61,28 @@ const homeSection = (hash) => {
                 </RouterLink>
 
                 <nav class="landing-nav" aria-label="Основное меню">
-                    <RouterLink :to="homeSection('#services')">Услуги</RouterLink>
-                    <RouterLink
-                        :to="{ name: 'projects' }"
-                        :class="{ 'is-active': route.name === 'projects' || route.name === 'projects.view' }"
-                    >
-                        Портфолио
-                    </RouterLink>
-                    <RouterLink
-                        :to="{ name: 'pricing' }"
-                        :class="{ 'is-active': route.name === 'pricing' }"
-                    >
-                        Цены
-                    </RouterLink>
-                    <RouterLink :to="homeSection('#team')">Команда</RouterLink>
-                    <RouterLink :to="homeSection('#contact')">Контакты</RouterLink>
+                    <template v-for="item in navigation" :key="item.slug">
+                        <a
+                            v-if="item.type === 'external'"
+                            :href="item.external_url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {{ item.label }}
+                        </a>
+                        <RouterLink
+                            v-else
+                            :to="navLinkTo(item)"
+                            :class="{ 'is-active': isNavActive(item) }"
+                        >
+                            {{ item.label }}
+                        </RouterLink>
+                    </template>
                 </nav>
 
                 <div class="landing-header__actions">
                     <a href="tel:+375291234567" class="landing-phone">+375 (29) 123-45-67</a>
-                    <a v-if="authLink" :href="authLink.href" class="landing-auth">{{ authLink.label }}</a>
-                    <RouterLink :to="homeSection('#contact')" class="landing-btn landing-btn--primary">
+                    <RouterLink :to="{ name: 'home', hash: '#contact' }" class="landing-btn landing-btn--primary">
                         Обсудить проект
                     </RouterLink>
 
@@ -89,17 +105,25 @@ const homeSection = (hash) => {
                 :class="{ 'is-open': mobileMenuOpen }"
                 aria-label="Мобильное меню"
             >
-                <RouterLink :to="homeSection('#services')" @click="closeMobileMenu">Услуги</RouterLink>
-                <RouterLink
-                    :to="{ name: 'projects' }"
-                    :class="{ 'is-active': route.name === 'projects' || route.name === 'projects.view' }"
-                    @click="closeMobileMenu"
-                >
-                    Портфолио
-                </RouterLink>
-                <RouterLink :to="{ name: 'pricing' }" @click="closeMobileMenu">Цены</RouterLink>
-                <RouterLink :to="homeSection('#team')" @click="closeMobileMenu">Команда</RouterLink>
-                <RouterLink :to="homeSection('#contact')" @click="closeMobileMenu">Контакты</RouterLink>
+                <template v-for="item in navigation" :key="`mobile-${item.slug}`">
+                    <a
+                        v-if="item.type === 'external'"
+                        :href="item.external_url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        @click="closeMobileMenu"
+                    >
+                        {{ item.label }}
+                    </a>
+                    <RouterLink
+                        v-else
+                        :to="navLinkTo(item)"
+                        :class="{ 'is-active': isNavActive(item) }"
+                        @click="closeMobileMenu"
+                    >
+                        {{ item.label }}
+                    </RouterLink>
+                </template>
                 <a href="tel:+375291234567" @click="closeMobileMenu">+375 (29) 123-45-67</a>
             </nav>
         </div>

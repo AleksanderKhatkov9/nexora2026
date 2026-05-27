@@ -11,9 +11,6 @@ if (appRoot) {
         homeUrl: appRoot.dataset.homeUrl || '/',
         projectsUrl: appRoot.dataset.projectsUrl || '/projects',
         faviconUrl: appRoot.dataset.faviconUrl || '/favicon.svg',
-        loginUrl: appRoot.dataset.loginUrl || '',
-        dashboardUrl: appRoot.dataset.dashboardUrl || '/nova',
-        isAuthenticated: appRoot.dataset.isAuthenticated?.trim() === 'true',
         csrfToken: appRoot.dataset.csrfToken || '',
         currentYear: appRoot.dataset.currentYear || new Date().getFullYear(),
     };

@@ -21,9 +21,6 @@
         data-home-url="{{ route('home') }}"
         data-projects-url="{{ route('projects') }}"
         data-favicon-url="{{ asset('favicon.svg') }}"
-        data-login-url="{{ Route::has('login') ? route('login') : '' }}"
-        data-dashboard-url="{{ url('/nova') }}"
-        data-is-authenticated="@auth true @else false @endauth"
         data-csrf-token="{{ csrf_token() }}"
         data-current-year="{{ date('Y') }}"
     ></div>

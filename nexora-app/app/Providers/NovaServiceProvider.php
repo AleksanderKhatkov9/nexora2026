@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Nova\Dashboards\Main;
+use App\Nova\Dashboards\OrdersAnalytics;
 use App\Nova\User as NovaUser;
 use App\Nova\Order as NovaOrder;
 use App\Nova\Page as NovaPage;
@@ -29,7 +30,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         Nova::mainMenu(function (Request $request) {
             return [
-                MenuSection::dashboard(Main::class)->icon('chart-bar'),
+                MenuSection::dashboard(Main::class)->icon('home'),
+                MenuSection::dashboard(OrdersAnalytics::class)->icon('chart-bar'),
                 
                 MenuSection::make('Пользователи', [
                     MenuItem::resource(NovaUser::class),
@@ -104,7 +106,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function dashboards(): array
     {
         return [
-            new \App\Nova\Dashboards\Main,
+            new Main,
+            new OrdersAnalytics,
         ];
     }
 

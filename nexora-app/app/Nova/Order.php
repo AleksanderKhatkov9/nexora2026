@@ -4,6 +4,9 @@ namespace App\Nova;
 
 use App\Models\Order as OrderModel;
 use App\Nova\Filters\OrderStatus;
+use App\Nova\Metrics\OrdersByStatus;
+use App\Nova\Metrics\OrdersTrend;
+use App\Nova\Metrics\TotalOrders;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -61,7 +64,11 @@ class Order extends Resource
 
     public function cards(NovaRequest $request): array
     {
-        return [];
+        return [
+            (new TotalOrders)->width('1/3'),
+            (new OrdersTrend)->width('2/3'),
+            (new OrdersByStatus)->width('1/2'),
+        ];
     }
 
     public function filters(NovaRequest $request): array

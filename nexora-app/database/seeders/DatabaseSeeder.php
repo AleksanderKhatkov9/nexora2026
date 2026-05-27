@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             TagsSeeder::class,
             ProjectSeeder::class,
             PageSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

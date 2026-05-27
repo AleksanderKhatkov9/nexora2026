@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\OrdersAnalytics;
+use App\Nova\Dashboards\SiteAnalytics;
 use App\Nova\User as NovaUser;
 use App\Nova\Order as NovaOrder;
 use App\Nova\Page as NovaPage;
@@ -32,6 +33,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return [
                 MenuSection::dashboard(Main::class)->icon('home'),
                 MenuSection::dashboard(OrdersAnalytics::class)->icon('chart-bar'),
+                MenuSection::dashboard(SiteAnalytics::class)->icon('globe-alt'),
                 
                 MenuSection::make('Пользователи', [
                     MenuItem::resource(NovaUser::class),
@@ -108,6 +110,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         return [
             new Main,
             new OrdersAnalytics,
+            new SiteAnalytics,
         ];
     }
 

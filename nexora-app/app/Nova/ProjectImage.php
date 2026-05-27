@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Support\PublicAssetUrl;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
@@ -39,12 +40,15 @@ class ProjectImage extends Resource
 
             BelongsTo::make('Проект', 'project', Project::class)
                 ->rules('required')
-                ->searchable(),
+                ->searchable()
+                ->hideWhenCreating(fn (NovaRequest $request) => (bool) $request->viaResource()),
 
             Image::make('Файл', 'path')
                 ->disk('public')
                 ->path('projects/gallery')
-                ->rules('required'),
+                ->rules('required')
+                ->thumbnail(fn ($value) => PublicAssetUrl::url($value))
+                ->preview(fn ($value) => PublicAssetUrl::url($value)),
 
             Text::make('Alt', 'alt')->nullable(),
 

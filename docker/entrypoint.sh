@@ -22,4 +22,9 @@ if [ ! -f public/build/manifest.json ]; then
   npm run build
 fi
 
+if [ ! -e public/storage ]; then
+  echo "Creating public/storage symlink..."
+  php artisan storage:link
+fi
+
 exec php-fpm

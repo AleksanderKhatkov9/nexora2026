@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\PublicAssetUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,7 @@ class PageResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'content' => $content,
-            'image' => $this->image,
+            'image' => PublicAssetUrl::url($this->image),
             'link' => $this->link,
             'seo_title' => $this->seo_title,
             'seo_description' => $this->seo_description,

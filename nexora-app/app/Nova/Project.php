@@ -3,8 +3,8 @@
 namespace App\Nova;
 
 use App\Nova\Filters\ActiveStatus;
-use Laravel\Nova\Auth\PasswordValidationRules;
-use Laravel\Nova\Fields\BelongsTo;
+use App\Support\PublicAssetUrl;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -16,6 +16,7 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Panel;
 
 class Project extends Resource
 {
@@ -37,10 +38,32 @@ class Project extends Resource
         return 'Проект';
     }
 
+    public static function indexQuery(NovaRequest $request, Builder $query): Builder
+    {
+        return $query->withCount('images');
+    }
+
+    public static function detailQuery(NovaRequest $request, Builder $query): Builder
+    {
+        return $query->with(['images', 'tags']);
+    }
+
     public function fields(NovaRequest $request): array
     {
         return [
             ID::make()->sortable(),
+
+            Image::make('Обложка', 'cover_image')
+                ->disk('public')
+                ->path('projects')
+                ->nullable()
+                ->thumbnail(fn ($value) => PublicAssetUrl::url($value))
+                ->preview(fn ($value) => PublicAssetUrl::url($value)),
+
+            Text::make('Галерея', 'images_count')
+                ->displayUsing(fn ($count) => ((int) $count) > 0 ? $count.' фото' : '—')
+                ->onlyOnIndex()
+                ->sortable(),
 
             Text::make('Название', 'title')->rules('required', 'max:255'),
             Text::make('Slug', 'slug')
@@ -51,21 +74,18 @@ class Project extends Resource
             Number::make('Год', 'year')->min(2000)->max(2100)->nullable(),
             Text::make('Буква', 'initial')->nullable()->rules('nullable', 'max:8'),
 
-            Textarea::make('Краткое описание', 'short_description')->nullable(),
-            Textarea::make('Полное описание', 'full_description')->nullable(),
+            Textarea::make('Краткое описание', 'short_description')->nullable()->hideFromIndex(),
+            Textarea::make('Полное описание', 'full_description')->nullable()->hideFromIndex(),
 
-            Image::make('Обложка', 'cover_image')
-                ->disk('public')
-                ->path('projects')
-                ->nullable(),
-
-            URL::make('Сайт', 'site_url')->nullable(),
+            URL::make('Сайт', 'site_url')->nullable()->hideFromIndex(),
 
             Boolean::make('Активен', 'active'),
 
             BelongsToMany::make('Теги', 'tags', Tags::class),
 
-            HasMany::make('Изображения', 'images', ProjectImage::class),
+            Panel::make('Галерея', [
+                HasMany::make('Изображения', 'images', ProjectImage::class),
+            ]),
 
             Text::make('SEO Title', 'seo_title')->nullable()->hideFromIndex(),
             Textarea::make('SEO Description', 'seo_description')->nullable()->hideFromIndex(),

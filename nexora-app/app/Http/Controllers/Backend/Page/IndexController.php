@@ -30,4 +30,15 @@ class IndexController extends Controller
 
         return response()->json(['data' => $data], 200);
     }
+
+    public function showPricing(): JsonResponse
+    {
+        $data = $this->pageService->getPricingData();
+
+        if (! $data) {
+            return response()->json(['message' => 'Pricing page not found'], 404);
+        }
+
+        return response()->json(['data' => $data], 200);
+    }
 }

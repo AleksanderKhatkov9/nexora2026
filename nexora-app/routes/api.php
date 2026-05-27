@@ -13,6 +13,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('page')->controller(IndexController::class)->group(function () {
     Route::get('/', 'indexPage')->name('page.index');
     Route::get('/home', 'showHome')->name('page.home');
+    Route::get('/pricing', 'showPricing')->name('page.pricing');
 });
 
 Route::prefix('project')->controller(ProjectController::class)->group(function () {

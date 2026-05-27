@@ -43,7 +43,7 @@ class Page extends Resource
                 ->rules('required', 'max:255')
                 ->creationRules('unique:pages,slug')
                 ->updateRules('unique:pages,slug,{{resourceId}}')
-                ->help('Уникальный идентификатор: home, projects, contacts'),
+                ->help('Уникальный идентификатор: home, projects, pricing, contacts'),
 
             Textarea::make('Описание', 'description')
                 ->nullable()
@@ -53,7 +53,7 @@ class Page extends Resource
             Code::make('Контент (JSON)', 'content')
                 ->json()
                 ->nullable()
-                ->help('Структура секций главной: hero, stats, services, cases, benefits, team, clients, departments. Для обычных страниц оставьте пустым.')
+                ->help('JSON: home — hero, stats, services…; pricing — intro, plans, extras, note. Для простых страниц оставьте пустым.')
                 ->hideFromIndex(),
 
             Image::make('Картинка', 'image')

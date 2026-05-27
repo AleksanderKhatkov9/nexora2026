@@ -49,9 +49,15 @@ const homeSection = (hash) => {
                     <RouterLink :to="homeSection('#services')">Услуги</RouterLink>
                     <RouterLink
                         :to="{ name: 'projects' }"
-                        :class="{ 'is-active': route.name === 'projects' }"
+                        :class="{ 'is-active': route.name === 'projects' || route.name === 'projects.view' }"
                     >
                         Портфолио
+                    </RouterLink>
+                    <RouterLink
+                        :to="{ name: 'pricing' }"
+                        :class="{ 'is-active': route.name === 'pricing' }"
+                    >
+                        Цены
                     </RouterLink>
                     <RouterLink :to="homeSection('#team')">Команда</RouterLink>
                     <RouterLink :to="homeSection('#contact')">Контакты</RouterLink>
@@ -86,11 +92,12 @@ const homeSection = (hash) => {
                 <RouterLink :to="homeSection('#services')" @click="closeMobileMenu">Услуги</RouterLink>
                 <RouterLink
                     :to="{ name: 'projects' }"
-                    :class="{ 'is-active': route.name === 'projects' }"
+                    :class="{ 'is-active': route.name === 'projects' || route.name === 'projects.view' }"
                     @click="closeMobileMenu"
                 >
                     Портфолио
                 </RouterLink>
+                <RouterLink :to="{ name: 'pricing' }" @click="closeMobileMenu">Цены</RouterLink>
                 <RouterLink :to="homeSection('#team')" @click="closeMobileMenu">Команда</RouterLink>
                 <RouterLink :to="homeSection('#contact')" @click="closeMobileMenu">Контакты</RouterLink>
                 <a href="tel:+375291234567" @click="closeMobileMenu">+375 (29) 123-45-67</a>

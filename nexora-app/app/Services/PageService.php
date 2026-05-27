@@ -20,7 +20,17 @@ class PageService
 
     public function getHomeData(): ?array
     {
-        $page = $this->pageRepository->getActiveBySlug('home');
+        return $this->getPageDataBySlug('home');
+    }
+
+    public function getPricingData(): ?array
+    {
+        return $this->getPageDataBySlug('pricing');
+    }
+
+    private function getPageDataBySlug(string $slug): ?array
+    {
+        $page = $this->pageRepository->getActiveBySlug($slug);
 
         if (! $page) {
             return null;

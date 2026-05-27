@@ -2,12 +2,18 @@ import { createRouter, createWebHistory } from 'vue-router';
 import IndexPage from './components/Page/IndexPage.vue';
 import ProjectsPage from './components/Page/ProjectsPage.vue';
 import ProjectViewPage from './components/Page/ProjectViewPage.vue';
+import PricingPage from './components/Page/PricingPage.vue';
 
 const routes = [
     {
         path: '/',
         name: 'home',
         component: IndexPage,
+    },
+    {
+        path: '/pricing',
+        name: 'pricing',
+        component: PricingPage,
     },
     {
         path: '/projects',

@@ -3,6 +3,11 @@ export async function fetchHomePage() {
     return data.data;
 }
 
+export async function fetchPricingPage() {
+    const { data } = await window.axios.get('/api/page/pricing');
+    return data.data;
+}
+
 export async function fetchProjectsPortfolio(tag = null) {
     const params = tag && tag !== 'all' ? { tag } : {};
     const { data } = await window.axios.get('/api/projects', { params });

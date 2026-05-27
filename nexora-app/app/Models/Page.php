@@ -25,6 +25,7 @@ class Page extends Model
 
     protected $casts = [
         'active' => 'boolean',
+        'content' => 'array',
     ];
 
     public function getRouteKeyName(): string

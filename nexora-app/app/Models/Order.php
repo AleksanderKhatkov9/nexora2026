@@ -27,11 +27,22 @@ class Order extends Model
         ];
     }
 
+    public static function channels(): array
+    {
+        return [
+            'email' => 'E-mail',
+            'phone' => 'Телефон',
+            'telegram' => 'Telegram',
+            'viber' => 'Viber',
+        ];
+    }
+
     protected $fillable = [
         'name',
         'phone',
         'email',
         'message',
+        'channel',
         'status',
     ];
 }

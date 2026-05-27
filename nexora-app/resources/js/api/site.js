@@ -14,3 +14,8 @@ export async function fetchProjectShow(id) {
     const { data } = await window.axios.get(`/api/projects/${id}`);
     return data.data;
 }
+
+export async function submitOrder(payload) {
+    const { data } = await window.axios.post('/api/orders', payload);
+    return data;
+}

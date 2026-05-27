@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\Order\OrderController;
 use App\Http\Controllers\Backend\Project\ProjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,7 @@ Route::prefix('project')->controller(ProjectController::class)->group(function (
 
 Route::get('/projects', [ProjectController::class, 'portfolio'])->name('projects.portfolio');
 Route::get('/projects/{id}', [ProjectController::class, 'show'])->whereNumber('id')->name('projects.show');
+
+Route::post('/orders', [OrderController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('orders.store');

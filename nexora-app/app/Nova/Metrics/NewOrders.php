@@ -2,22 +2,25 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\User;
+use App\Models\Order;
 use DateTimeInterface;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use Laravel\Nova\Metrics\ValueResult;
 
-class NewUsers extends Value
+class NewOrders extends Value
 {
     public function name(): string
     {
-        return 'Пользователи';
+        return 'Новые заявки';
     }
 
     public function calculate(NovaRequest $request): ValueResult
     {
-        return $this->count($request, User::class);
+        return $this->count(
+            $request,
+            Order::query()->where('status', Order::STATUS_NEW)
+        );
     }
 
     public function ranges(): array

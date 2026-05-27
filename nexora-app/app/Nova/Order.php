@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Models\Order as OrderModel;
+use App\Nova\Filters\OrderStatus;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -41,6 +42,12 @@ class Order extends Resource
 
             Textarea::make('Сообщение', 'message')->nullable(),
 
+            Select::make('Способ связи', 'channel')
+                ->options(OrderModel::channels())
+                ->displayUsingLabels()
+                ->nullable()
+                ->exceptOnForms(),
+
             Select::make('Статус', 'status')
                 ->options(OrderModel::statuses())
                 ->displayUsingLabels()
@@ -59,7 +66,9 @@ class Order extends Resource
 
     public function filters(NovaRequest $request): array
     {
-        return [];
+        return [
+            new OrderStatus,
+        ];
     }
 
     public function lenses(NovaRequest $request): array

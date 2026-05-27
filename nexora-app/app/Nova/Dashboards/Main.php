@@ -2,24 +2,19 @@
 
 namespace App\Nova\Dashboards;
 
-use Laravel\Nova\Cards\Help;
+use App\Nova\Metrics\ActiveProjects;
+use App\Nova\Metrics\NewOrders;
 use App\Nova\Metrics\NewUsers;
-use App\Nova\Metrics\NewRoles;
 use Laravel\Nova\Dashboards\Main as Dashboard;
 
 class Main extends Dashboard
 {
-    /**
-     * Get the cards for the dashboard.
-     *
-     * @return array<int, \Laravel\Nova\Card>
-     */
     public function cards(): array
     {
         return [
+            new NewOrders,
+            new ActiveProjects,
             new NewUsers,
-            new NewRoles,
-            new Help,
         ];
     }
 }

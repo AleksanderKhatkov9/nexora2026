@@ -55,6 +55,6 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return in_array($this->userRole->title, UserRole::ADMINS);
+        return in_array($this->userRole?->title, UserRole::ADMINS, true);
     }
 }

@@ -31,10 +31,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             return [
                 MenuSection::dashboard(Main::class)->icon('chart-bar'),
                 
-                MenuSection::make('Users', [
+                MenuSection::make('Пользователи', [
                     MenuItem::resource(NovaUser::class),
                     MenuItem::resource(UserRole::class),
-                ])->icon('squares-2x2')->collapsable(),
+                ])->icon('user-group')->collapsable(),
 
                 MenuSection::make('Контент', [
                     MenuItem::resource(NovaPage::class),

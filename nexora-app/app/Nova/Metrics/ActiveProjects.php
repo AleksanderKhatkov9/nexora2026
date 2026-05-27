@@ -2,22 +2,24 @@
 
 namespace App\Nova\Metrics;
 
-use App\Models\UserRole;
+use App\Models\Project;
 use DateTimeInterface;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Value;
 use Laravel\Nova\Metrics\ValueResult;
 
-class NewRoles extends Value
+class ActiveProjects extends Value
 {
     public function name(): string
     {
-        return 'Roles';
+        return 'Активные проекты';
     }
 
     public function calculate(NovaRequest $request): ValueResult
     {
-        return $this->result(UserRole::query()->count());
+        return $this->result(
+            Project::query()->where('active', true)->count()
+        );
     }
 
     public function ranges(): array
@@ -25,7 +27,7 @@ class NewRoles extends Value
         return [];
     }
 
-    public function cacheFor(): DateTimeInterface|null
+    public function cacheFor(): ?DateTimeInterface
     {
         return null;
     }

@@ -1,7 +1,7 @@
 <script setup>
 import { inject, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import { fetchHomePage } from '../../api/site';
+import { fetchHomePage, submitOrder } from '../../api/site';
 
 const appConfig = inject('appConfig');
 
@@ -9,6 +9,17 @@ const loading = ref(true);
 const error = ref('');
 const page = ref(null);
 const sections = ref(null);
+
+const form = ref({
+    name: '',
+    phone: '',
+    email: '',
+    message: '',
+    channel: 'email',
+});
+const formSubmitting = ref(false);
+const formSuccess = ref('');
+const formError = ref('');
 
 const loadPage = async () => {
     loading.value = true;
@@ -33,6 +44,36 @@ const loadPage = async () => {
         console.error(e);
     } finally {
         loading.value = false;
+    }
+};
+
+const resetForm = () => {
+    form.value = {
+        name: '',
+        phone: '',
+        email: '',
+        message: '',
+        channel: 'email',
+    };
+};
+
+const handleSubmit = async () => {
+    formSubmitting.value = true;
+    formSuccess.value = '';
+    formError.value = '';
+
+    try {
+        const response = await submitOrder({ ...form.value });
+        formSuccess.value = response.message;
+        resetForm();
+    } catch (e) {
+        const validationMessage = e.response?.data?.errors
+            ? Object.values(e.response.data.errors).flat().join(' ')
+            : null;
+        formError.value = validationMessage || 'Не удалось отправить заявку. Попробуйте позже.';
+        console.error(e);
+    } finally {
+        formSubmitting.value = false;
     }
 };
 
@@ -189,39 +230,75 @@ onMounted(loadPage);
                         </p>
                     </div>
 
-                    <form class="landing-form" action="#" method="post">
-                        <input v-if="appConfig.csrfToken" type="hidden" name="_token" :value="appConfig.csrfToken">
-
+                    <form class="landing-form" @submit.prevent="handleSubmit">
                         <div class="landing-form__row landing-form__row--2">
                             <div>
                                 <label for="name">Ваше имя</label>
-                                <input type="text" id="name" name="name" required placeholder="Иван">
+                                <input
+                                    v-model="form.name"
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    required
+                                    placeholder="Иван"
+                                    :disabled="formSubmitting"
+                                >
                             </div>
                             <div>
                                 <label for="phone">Телефон</label>
-                                <input type="tel" id="phone" name="phone" required placeholder="+375 (29) 000-00-00">
+                                <input
+                                    v-model="form.phone"
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    required
+                                    placeholder="+375 (29) 000-00-00"
+                                    :disabled="formSubmitting"
+                                >
                             </div>
                         </div>
                         <div>
                             <label for="email">E-mail</label>
-                            <input type="email" id="email" name="email" required placeholder="mail@example.com">
+                            <input
+                                v-model="form.email"
+                                type="email"
+                                id="email"
+                                name="email"
+                                required
+                                placeholder="mail@example.com"
+                                :disabled="formSubmitting"
+                            >
                         </div>
                         <div>
                             <label for="message">Описание проекта</label>
-                            <textarea id="message" name="message" placeholder="Расскажите о задаче…"></textarea>
+                            <textarea
+                                v-model="form.message"
+                                id="message"
+                                name="message"
+                                placeholder="Расскажите о задаче…"
+                                :disabled="formSubmitting"
+                            ></textarea>
                         </div>
                         <div>
                             <span style="display:block;margin-bottom:10px;font-size:0.85rem;font-weight:500;color:var(--nx-text-muted);">
                                 Как удобнее связаться?
                             </span>
                             <div class="landing-form__channels">
-                                <label><input type="radio" name="channel" value="email" checked> E-mail</label>
-                                <label><input type="radio" name="channel" value="phone"> Телефон</label>
-                                <label><input type="radio" name="channel" value="telegram"> Telegram</label>
-                                <label><input type="radio" name="channel" value="viber"> Viber</label>
+                                <label><input v-model="form.channel" type="radio" name="channel" value="email" :disabled="formSubmitting"> E-mail</label>
+                                <label><input v-model="form.channel" type="radio" name="channel" value="phone" :disabled="formSubmitting"> Телефон</label>
+                                <label><input v-model="form.channel" type="radio" name="channel" value="telegram" :disabled="formSubmitting"> Telegram</label>
+                                <label><input v-model="form.channel" type="radio" name="channel" value="viber" :disabled="formSubmitting"> Viber</label>
                             </div>
                         </div>
-                        <button type="submit" class="landing-btn landing-btn--primary">Отправить заявку</button>
+                        <button type="submit" class="landing-btn landing-btn--primary" :disabled="formSubmitting">
+                            {{ formSubmitting ? 'Отправка…' : 'Отправить заявку' }}
+                        </button>
+                        <p v-if="formSuccess" class="landing-form__feedback landing-form__feedback--success">
+                            {{ formSuccess }}
+                        </p>
+                        <p v-if="formError" class="landing-form__feedback landing-form__feedback--error">
+                            {{ formError }}
+                        </p>
                         <p class="landing-form__note">
                             * Мы делаем проекты, которые работают на ваш бизнес: продают, приносят прибыль и укрепляют имидж.
                         </p>
@@ -240,6 +317,19 @@ onMounted(loadPage);
 }
 
 .landing-state--error {
+    color: #b42318;
+}
+
+.landing-form__feedback {
+    margin: 12px 0 0;
+    font-size: 0.9rem;
+}
+
+.landing-form__feedback--success {
+    color: #067647;
+}
+
+.landing-form__feedback--error {
     color: #b42318;
 }
 </style>

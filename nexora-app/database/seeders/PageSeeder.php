@@ -81,7 +81,7 @@ class PageSeeder extends Seeder
                 'slug' => 'home',
                 'title' => 'Nexora — создание сайтов и веб-разработка',
                 'description' => 'Nexora — разработка и сопровождение веб-проектов под ключ. Современные сайты, порталы и автоматизация бизнес-процессов.',
-                'content' => json_encode($homeContent, JSON_UNESCAPED_UNICODE),
+                'content' => $homeContent,
                 'active' => true,
                 'seo_title' => 'Nexora — создание сайтов и веб-разработка',
                 'seo_description' => 'Nexora — разработка и сопровождение веб-проектов под ключ.',

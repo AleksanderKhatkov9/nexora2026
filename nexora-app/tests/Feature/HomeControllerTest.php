@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class HomeControllerTest extends TestCase
@@ -11,8 +9,10 @@ class HomeControllerTest extends TestCase
     public function test_home_page_is_available(): void
     {
         $response = $this->get('/');
+
         $response->assertOk();
-        $response->assertViewIs('backend.page.index');
+        $response->assertViewIs('index');
+        $response->assertSee('id="app"', false);
     }
 
     public function test_projects_page_is_available(): void
@@ -20,8 +20,7 @@ class HomeControllerTest extends TestCase
         $response = $this->get(route('projects'));
 
         $response->assertOk();
-        $response->assertViewIs('projects');
-        $response->assertSee('Портфолио', false);
-        $response->assertSee('Ecotravel', false);
+        $response->assertViewIs('index');
+        $response->assertSee('data-projects-url', false);
     }
 }

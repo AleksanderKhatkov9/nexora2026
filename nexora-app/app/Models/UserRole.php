@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserRole extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['id', 'title', 'permission'];
+    protected $fillable = ['title'];
 
     public const ROLE_ADMIN = 'Администратор';
     public const ROLE_MODERATOR = 'Модератор';
@@ -23,10 +22,5 @@ class UserRole extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
-    }
-
-    public function userRoles(): BelongsTo
-    {
-        return $this->belongsTo(UserRole::class, 'user_role_id', 'id');
     }
 }

@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Mail\NewOrderMail;
 use App\Models\Order;
 use App\Repositories\Contracts\OrderRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class OrderService
 {
@@ -24,8 +26,15 @@ class OrderService
             'status' => Order::STATUS_NEW,
         ]);
 
-        Mail::to(config('nexora.order_notification_email'))
-            ->send(new NewOrderMail($order));
+        try {
+            Mail::to(config('nexora.order_notification_email'))
+                ->send(new NewOrderMail($order));
+        } catch (Throwable $exception) {
+            Log::error('Order notification mail failed', [
+                'order_id' => $order->id,
+                'message' => $exception->getMessage(),
+            ]);
+        }
 
         return $order;
     }

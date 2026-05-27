@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, ref } from 'vue';
+import { inject, onMounted, onUnmounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { fetchHomePage, submitOrder } from '../../api/site';
 
@@ -20,6 +20,16 @@ const form = ref({
 const formSubmitting = ref(false);
 const formSuccess = ref('');
 const formError = ref('');
+const formIsSuccess = ref(false);
+
+const SUCCESS_RESET_MS = 4000;
+let successResetTimer = null;
+
+const clearSuccessState = () => {
+    formSuccess.value = '';
+    formIsSuccess.value = false;
+    successResetTimer = null;
+};
 
 const loadPage = async () => {
     loading.value = true;
@@ -59,13 +69,21 @@ const resetForm = () => {
 
 const handleSubmit = async () => {
     formSubmitting.value = true;
-    formSuccess.value = '';
+    clearSuccessState();
     formError.value = '';
+
+    if (successResetTimer) {
+        clearTimeout(successResetTimer);
+        successResetTimer = null;
+    }
 
     try {
         const response = await submitOrder({ ...form.value });
-        formSuccess.value = response.message;
+        formSuccess.value = response.message || 'Данные успешно отправлены!';
+        formIsSuccess.value = true;
         resetForm();
+
+        successResetTimer = setTimeout(clearSuccessState, SUCCESS_RESET_MS);
     } catch (e) {
         const validationMessage = e.response?.data?.errors
             ? Object.values(e.response.data.errors).flat().join(' ')
@@ -78,6 +96,12 @@ const handleSubmit = async () => {
 };
 
 onMounted(loadPage);
+
+onUnmounted(() => {
+    if (successResetTimer) {
+        clearTimeout(successResetTimer);
+    }
+});
 </script>
 
 <template>
@@ -230,7 +254,11 @@ onMounted(loadPage);
                         </p>
                     </div>
 
-                    <form class="landing-form" @submit.prevent="handleSubmit">
+                    <form
+                        class="landing-form"
+                        :class="{ 'landing-form--success': formIsSuccess }"
+                        @submit.prevent="handleSubmit"
+                    >
                         <div class="landing-form__row landing-form__row--2">
                             <div>
                                 <label for="name">Ваше имя</label>
@@ -279,7 +307,7 @@ onMounted(loadPage);
                                 :disabled="formSubmitting"
                             ></textarea>
                         </div>
-                        <div>
+                        <!-- <div>
                             <span style="display:block;margin-bottom:10px;font-size:0.85rem;font-weight:500;color:var(--nx-text-muted);">
                                 Как удобнее связаться?
                             </span>
@@ -289,11 +317,22 @@ onMounted(loadPage);
                                 <label><input v-model="form.channel" type="radio" name="channel" value="telegram" :disabled="formSubmitting"> Telegram</label>
                                 <label><input v-model="form.channel" type="radio" name="channel" value="viber" :disabled="formSubmitting"> Viber</label>
                             </div>
-                        </div>
-                        <button type="submit" class="landing-btn landing-btn--primary" :disabled="formSubmitting">
-                            {{ formSubmitting ? 'Отправка…' : 'Отправить заявку' }}
+                        </div> -->
+                        <button
+                            type="submit"
+                            class="landing-btn landing-btn--primary"
+                            :class="{ 'landing-btn--success': formIsSuccess }"
+                            :disabled="formSubmitting || formIsSuccess"
+                        >
+                            {{
+                                formSubmitting
+                                    ? 'Отправка…'
+                                    : formIsSuccess
+                                        ? 'Данные отправлены!'
+                                        : 'Отправить заявку'
+                            }}
                         </button>
-                        <p v-if="formSuccess" class="landing-form__feedback landing-form__feedback--success">
+                        <p v-if="formSuccess" class="landing-form__feedback landing-form__feedback--success" role="status">
                             {{ formSuccess }}
                         </p>
                         <p v-if="formError" class="landing-form__feedback landing-form__feedback--error">
@@ -331,5 +370,21 @@ onMounted(loadPage);
 
 .landing-form__feedback--error {
     color: #b42318;
+}
+
+.landing-form {
+    transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.landing-form--success {
+    border-color: #067647;
+    background-color: rgba(6, 118, 71, 0.08);
+    box-shadow: 0 0 0 1px rgba(6, 118, 71, 0.15);
+}
+
+.landing-btn--success {
+    background-color: #067647 !important;
+    border-color: #067647 !important;
+    color: #fff !important;
 }
 </style>

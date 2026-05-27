@@ -45,4 +45,20 @@ class OrderStoreTest extends TestCase
         $response->assertUnprocessable();
         $response->assertJsonValidationErrors(['name', 'phone', 'email']);
     }
+
+    public function test_order_is_saved_even_when_mail_fails(): void
+    {
+        Mail::shouldReceive('to')->once()->andThrow(new \RuntimeException('SMTP unavailable'));
+
+        $response = $this->postJson('/api/orders', [
+            'name' => 'Иван Петров',
+            'phone' => '+375291234567',
+            'email' => 'ivan@example.com',
+            'message' => 'Тест',
+            'channel' => 'email',
+        ]);
+
+        $response->assertCreated();
+        $this->assertDatabaseHas('orders', ['email' => 'ivan@example.com']);
+    }
 }

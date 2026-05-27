@@ -8,6 +8,8 @@ Route::post('/api/orders', [OrderController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('orders.store');
 
+Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name('sitemap');
+
 Route::get('/', IndexController::class)->name('home');
 Route::get('/pricing', IndexController::class)->name('pricing');
 Route::get('/projects/{any?}', IndexController::class)->where('any', '.*')->name('projects');

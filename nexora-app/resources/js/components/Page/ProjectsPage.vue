@@ -74,7 +74,7 @@ const {
                                     {{ project.short_description }}
                                 </p>
                                 <RouterLink
-                                    :to="{ name: 'projects.view', params: { id: project.id } }"
+                                    :to="{ name: 'projects.view', params: { slug: project.slug } }"
                                     class="landing-project-card__link"
                                 >
                                     Смотреть проект →

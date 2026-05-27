@@ -22,7 +22,7 @@ export const routes = [
         component: ProjectsPage,
     },
     {
-        path: '/projects/page/:id',
+        path: '/projects/:slug',
         name: 'projects.view',
         component: ProjectViewPage,
     },

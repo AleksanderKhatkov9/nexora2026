@@ -25,9 +25,9 @@ class ProjectController extends Controller
         ], 200);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(string $slug): JsonResponse
     {
-        $data = $this->projectService->getProjectById($id);
+        $data = $this->projectService->getProjectBySlug($slug);
 
         if (! $data) {
             return response()->json(['message' => 'Project not found'], 404);

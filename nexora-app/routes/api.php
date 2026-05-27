@@ -22,4 +22,6 @@ Route::prefix('project')->controller(ProjectController::class)->group(function (
 });
 
 Route::get('/projects', [ProjectController::class, 'portfolio'])->name('projects.portfolio');
-Route::get('/projects/{id}', [ProjectController::class, 'show'])->whereNumber('id')->name('projects.show');
+Route::get('/projects/{slug}', [ProjectController::class, 'show'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('projects.show');

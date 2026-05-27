@@ -57,10 +57,6 @@ const { loading, error, page } = useCmsPage(
                             <p>{{ page.content.body }}</p>
                         </div>
 
-                        <div v-else-if="page.content && Object.keys(page.content).length" class="landing-generic-page__json">
-                            <pre>{{ JSON.stringify(page.content, null, 2) }}</pre>
-                        </div>
-
                         <div class="landing-generic-page__actions">
                             <RouterLink :to="{ name: 'home', hash: '#contact' }" class="landing-btn landing-btn--primary">
                                 Оставить заявку
@@ -103,19 +99,6 @@ const { loading, error, page } = useCmsPage(
 .landing-generic-page__body p {
     margin: 0;
     white-space: pre-line;
-}
-
-.landing-generic-page__json {
-    margin-bottom: 32px;
-    padding: 16px;
-    background: var(--nx-bg-elevated);
-    border-radius: var(--nx-radius);
-    overflow-x: auto;
-}
-
-.landing-generic-page__json pre {
-    margin: 0;
-    font-size: 0.85rem;
 }
 
 .landing-generic-page__actions {

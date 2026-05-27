@@ -9,9 +9,9 @@ const route = useRoute();
 const api = useSiteApi();
 
 const { loading, error, page: project } = useCmsPage(
-    () => api.projects.getById(route.params.id),
+    () => api.projects.getBySlug(route.params.slug),
     {
-        watchSource: () => route.params.id,
+        watchSource: () => route.params.slug,
         notFoundMessage: 'Проект не найден.',
         errorMessage: 'Не удалось загрузить проект.',
     },

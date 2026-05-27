@@ -54,4 +54,15 @@ class ProjectService
 
         return (new ProjectResource($project))->resolve();
     }
+
+    public function getProjectBySlug(string $slug): ?array
+    {
+        $project = $this->projectRepository->findActiveBySlug($slug);
+
+        if (! $project) {
+            return null;
+        }
+
+        return (new ProjectResource($project))->resolve();
+    }
 }

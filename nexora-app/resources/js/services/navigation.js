@@ -31,5 +31,9 @@ export function isNavigationItemActive(route, item) {
         return route.name === 'page' && route.params.slug === item.slug;
     }
 
+    if (item.route_name === 'projects.view') {
+        return route.name === 'projects.view';
+    }
+
     return route.name === item.route_name;
 }

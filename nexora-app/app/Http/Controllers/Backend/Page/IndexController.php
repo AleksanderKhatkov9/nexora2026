@@ -4,15 +4,22 @@ namespace App\Http\Controllers\Backend\Page;
 
 use App\Http\Controllers\Controller;
 use App\Services\PageService;
+use App\Services\SeoService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
-    public function __construct(private readonly PageService $pageService) {}
+    public function __construct(
+        private readonly PageService $pageService,
+        private readonly SeoService $seoService,
+    ) {}
 
-    public function __invoke()
+    public function __invoke(Request $request)
     {
-        return view('index');
+        return view('index', [
+            'seo' => $this->seoService->resolveForRequest($request),
+        ]);
     }
 
     public function showHome(): JsonResponse

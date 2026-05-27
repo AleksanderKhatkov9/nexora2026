@@ -13,4 +13,6 @@ interface PageRepositoryInterface
     public function getFooterItems(int $limit = 100): Collection;
 
     public function getActiveBySlug(string $slug): ?\App\Models\Page;
+
+    public function getSitemapPages(int $limit = 200): Collection;
 }

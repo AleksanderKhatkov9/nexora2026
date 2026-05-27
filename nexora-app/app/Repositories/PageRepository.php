@@ -46,4 +46,14 @@ class PageRepository implements PageRepositoryInterface
             ->where('slug', $slug)
             ->first();
     }
+
+    public function getSitemapPages(int $limit = 200): Collection
+    {
+        return Page::query()
+            ->where('active', true)
+            ->where('menu_type', Page::MENU_TYPE_ROUTE)
+            ->orderBy('slug')
+            ->limit($limit)
+            ->get();
+    }
 }

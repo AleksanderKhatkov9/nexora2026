@@ -5,6 +5,6 @@ export function createProjectApi(http) {
             return http.get('/api/projects', { params });
         },
 
-        getById: (id) => http.get(`/api/projects/${id}`),
+        getBySlug: (slug) => http.get(`/api/projects/${slug}`),
     };
 }

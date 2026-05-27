@@ -38,4 +38,22 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->with(['tags', 'images'])
             ->find($id);
     }
+
+    public function findActiveBySlug(string $slug): ?Project
+    {
+        return Project::query()
+            ->where('active', true)
+            ->where('slug', $slug)
+            ->with(['tags', 'images'])
+            ->first();
+    }
+
+    public function getSitemapProjects(int $limit = 500): Collection
+    {
+        return Project::query()
+            ->where('active', true)
+            ->orderByDesc('updated_at')
+            ->limit($limit)
+            ->get(['slug', 'updated_at']);
+    }
 }

@@ -11,4 +11,8 @@ interface ProjectRepositoryInterface
     public function getAllActiveWithTags(?string $tagSlug = null, int $limit = 200): Collection;
 
     public function findActiveById(int $id): ?\App\Models\Project;
+
+    public function findActiveBySlug(string $slug): ?\App\Models\Project;
+
+    public function getSitemapProjects(int $limit = 500): Collection;
 }

@@ -19,7 +19,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pages', function (Blueprint $table) {
-            $table->dropColumn(['show_in_footer', 'footer_group', 'footer_order']);
+            $table->dropColumn(['show_in_footer', 'footer_group', 'footer_order', 'footer_label']);
         });
     }
 };

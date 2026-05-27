@@ -13,13 +13,6 @@ class PageService
         private readonly PageRepositoryInterface $pageRepository,
     ) {}
 
-    public function getIndexData(): array
-    {
-        return [
-            'pages' => PageResource::collection($this->pageRepository->getAllActive())->resolve(),
-        ];
-    }
-
     public function getHomeData(): ?array
     {
         return $this->getPageDataBySlug('home');

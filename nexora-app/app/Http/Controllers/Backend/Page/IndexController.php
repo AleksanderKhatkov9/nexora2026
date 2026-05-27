@@ -15,11 +15,6 @@ class IndexController extends Controller
         return view('index');
     }
 
-    public function indexPage(): JsonResponse
-    {
-        return response()->json($this->pageService->getIndexData(), 200);
-    }
-
     public function showHome(): JsonResponse
     {
         $data = $this->pageService->getHomeData();

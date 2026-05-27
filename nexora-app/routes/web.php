@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Backend\Order\OrderController;
 use App\Http\Controllers\Backend\Page\IndexController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/api/orders', [OrderController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('orders.store');
 
 Route::get('/', IndexController::class)->name('home');
 Route::get('/pricing', IndexController::class)->name('pricing');

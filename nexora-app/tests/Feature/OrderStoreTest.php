@@ -12,17 +12,31 @@ class OrderStoreTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_order_can_be_submitted_via_api(): void
+    private function validOrderPayload(): array
     {
-        Mail::fake();
-
-        $response = $this->postJson('/api/orders', [
+        return [
             'name' => 'Иван Петров',
             'phone' => '+375291234567',
             'email' => 'ivan@example.com',
             'message' => 'Нужен корпоративный сайт',
             'channel' => 'telegram',
-        ]);
+        ];
+    }
+
+    /**
+     * CSRF проверяется отдельно в test_order_without_csrf_token_is_rejected.
+     */
+    private function postOrder(array $payload)
+    {
+        return $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+            ->postJson('/api/orders', $payload);
+    }
+
+    public function test_order_can_be_submitted_via_api(): void
+    {
+        Mail::fake();
+
+        $response = $this->postOrder($this->validOrderPayload());
 
         $response->assertCreated();
         $response->assertJsonPath('data.id', 1);
@@ -40,7 +54,8 @@ class OrderStoreTest extends TestCase
 
     public function test_order_requires_valid_fields(): void
     {
-        $response = $this->postJson('/api/orders', []);
+        $response = $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class)
+            ->postJson('/api/orders', []);
 
         $response->assertUnprocessable();
         $response->assertJsonValidationErrors(['name', 'phone', 'email']);
@@ -50,7 +65,7 @@ class OrderStoreTest extends TestCase
     {
         Mail::shouldReceive('to')->once()->andThrow(new \RuntimeException('SMTP unavailable'));
 
-        $response = $this->postJson('/api/orders', [
+        $response = $this->postOrder([
             'name' => 'Иван Петров',
             'phone' => '+375291234567',
             'email' => 'ivan@example.com',
@@ -60,5 +75,13 @@ class OrderStoreTest extends TestCase
 
         $response->assertCreated();
         $this->assertDatabaseHas('orders', ['email' => 'ivan@example.com']);
+    }
+
+    public function test_order_without_csrf_token_is_rejected(): void
+    {
+        $response = $this->postJson('/api/orders', $this->validOrderPayload());
+
+        $response->assertStatus(419);
+        $this->assertDatabaseCount('orders', 0);
     }
 }

@@ -62,7 +62,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             ->features([
                 Features::updatePasswords(),
                 // Features::emailVerification(),
-                // Features::twoFactorAuthentication(['confirm' => true, 'confirmPassword' => true]),
+                Features::twoFactorAuthentication(['confirm' => true, 'confirmPassword' => true]),
             ])
             ->register();
     }

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\PageFooterResource;
 use App\Http\Resources\PageNavResource;
 use App\Http\Resources\PageResource;
 use App\Repositories\Contracts\PageRepositoryInterface;
@@ -33,6 +34,13 @@ class PageService
     {
         return PageNavResource::collection(
             $this->pageRepository->getNavigationItems()
+        )->resolve();
+    }
+
+    public function getFooterData(): array
+    {
+        return PageFooterResource::collection(
+            $this->pageRepository->getFooterItems()
         )->resolve();
     }
 

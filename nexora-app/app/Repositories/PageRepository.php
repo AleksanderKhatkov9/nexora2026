@@ -27,6 +27,18 @@ class PageRepository implements PageRepositoryInterface
             ->get();
     }
 
+    public function getFooterItems(int $limit = 100): Collection
+    {
+        return Page::query()
+            ->where('active', true)
+            ->where('show_in_footer', true)
+            ->orderByRaw("FIELD(footer_group, 'sections', 'services', 'legal')")
+            ->orderBy('footer_order')
+            ->orderBy('id')
+            ->limit($limit)
+            ->get();
+    }
+
     public function getActiveBySlug(string $slug): ?Page
     {
         return Page::query()

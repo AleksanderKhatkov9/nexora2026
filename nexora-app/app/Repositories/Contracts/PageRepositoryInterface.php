@@ -10,5 +10,7 @@ interface PageRepositoryInterface
 
     public function getNavigationItems(int $limit = 50): Collection;
 
+    public function getFooterItems(int $limit = 100): Collection;
+
     public function getActiveBySlug(string $slug): ?\App\Models\Page;
 }

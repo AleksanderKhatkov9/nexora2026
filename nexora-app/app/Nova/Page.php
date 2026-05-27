@@ -73,6 +73,25 @@ class Page extends Resource
 
             Boolean::make('В меню', 'show_in_menu'),
 
+            Boolean::make('В подвале', 'show_in_footer'),
+
+            Select::make('Группа в подвале', 'footer_group')
+                ->options(PageModel::FOOTER_GROUPS)
+                ->nullable()
+                ->displayUsingLabels()
+                ->hideFromIndex()
+                ->help('Разделы, Услуги или Правовая информация'),
+
+            Number::make('Порядок в подвале', 'footer_order')
+                ->min(0)
+                ->default(0)
+                ->hideFromIndex(),
+
+            Text::make('Подпись в подвале', 'footer_label')
+                ->nullable()
+                ->hideFromIndex()
+                ->help('Если пусто — используется подпись меню или название'),
+
             Number::make('Порядок в меню', 'menu_order')
                 ->min(0)
                 ->default(0)

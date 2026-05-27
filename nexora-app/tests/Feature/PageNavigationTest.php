@@ -73,4 +73,50 @@ class PageNavigationTest extends TestCase
 
         $this->getJson('/api/page/nav-contact')->assertNotFound();
     }
+
+    public function test_footer_api_returns_grouped_footer_items(): void
+    {
+        Page::query()->create([
+            'slug' => 'about',
+            'title' => 'О компании',
+            'menu_type' => Page::MENU_TYPE_ROUTE,
+            'show_in_footer' => true,
+            'footer_group' => Page::FOOTER_GROUP_SECTIONS,
+            'footer_order' => 10,
+            'footer_label' => 'О нас',
+            'active' => true,
+        ]);
+
+        Page::query()->create([
+            'slug' => 'pricing',
+            'title' => 'Цены',
+            'menu_type' => Page::MENU_TYPE_ROUTE,
+            'show_in_footer' => true,
+            'footer_group' => Page::FOOTER_GROUP_SERVICES,
+            'footer_order' => 10,
+            'footer_label' => 'Стоимость создания сайта',
+            'active' => true,
+        ]);
+
+        Page::query()->create([
+            'slug' => 'privacy',
+            'title' => 'Политика конфиденциальности',
+            'menu_type' => Page::MENU_TYPE_ROUTE,
+            'show_in_footer' => true,
+            'footer_group' => Page::FOOTER_GROUP_LEGAL,
+            'footer_order' => 10,
+            'footer_label' => 'Политика в отношении обработки персональных данных',
+            'active' => true,
+        ]);
+
+        $response = $this->getJson('/api/page/footer');
+
+        $response->assertOk();
+        $response->assertJsonCount(3, 'data');
+        $response->assertJsonPath('data.0.label', 'О нас');
+        $response->assertJsonPath('data.0.footer_group', 'sections');
+        $response->assertJsonPath('data.1.label', 'Стоимость создания сайта');
+        $response->assertJsonPath('data.1.footer_group', 'services');
+        $response->assertJsonPath('data.2.route_name', 'page');
+    }
 }

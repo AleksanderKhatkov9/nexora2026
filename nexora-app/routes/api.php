@@ -13,6 +13,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('page')->controller(IndexController::class)->group(function () {
     Route::get('/', 'indexPage')->name('page.index');
     Route::get('/navigation', 'navigation')->name('page.navigation');
+    Route::get('/footer', 'footer')->name('page.footer');
     Route::get('/home', 'showHome')->name('page.home');
     Route::get('/pricing', 'showPricing')->name('page.pricing');
     Route::get('/{slug}', 'show')->name('page.show');

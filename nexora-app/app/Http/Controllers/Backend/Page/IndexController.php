@@ -49,6 +49,13 @@ class IndexController extends Controller
         ], 200);
     }
 
+    public function footer(): JsonResponse
+    {
+        return response()->json([
+            'data' => $this->pageService->getFooterData(),
+        ], 200);
+    }
+
     public function show(string $slug): JsonResponse
     {
         $data = $this->pageService->getPageBySlug($slug);

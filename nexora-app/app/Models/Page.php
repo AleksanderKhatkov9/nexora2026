@@ -19,6 +19,10 @@ class Page extends Model
         'link',
         'active',
         'show_in_menu',
+        'show_in_footer',
+        'footer_group',
+        'footer_order',
+        'footer_label',
         'menu_order',
         'menu_label',
         'menu_type',
@@ -40,10 +44,24 @@ class Page extends Model
         self::MENU_TYPE_EXTERNAL => 'Внешняя ссылка',
     ];
 
+    public const FOOTER_GROUP_SECTIONS = 'sections';
+
+    public const FOOTER_GROUP_SERVICES = 'services';
+
+    public const FOOTER_GROUP_LEGAL = 'legal';
+
+    public const FOOTER_GROUPS = [
+        self::FOOTER_GROUP_SECTIONS => 'Разделы',
+        self::FOOTER_GROUP_SERVICES => 'Услуги',
+        self::FOOTER_GROUP_LEGAL => 'Правовая информация',
+    ];
+
     protected $casts = [
         'active' => 'boolean',
         'show_in_menu' => 'boolean',
+        'show_in_footer' => 'boolean',
         'menu_order' => 'integer',
+        'footer_order' => 'integer',
         'content' => 'array',
     ];
 

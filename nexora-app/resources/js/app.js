@@ -20,6 +20,7 @@ async function bootstrap() {
     const siteApi = createSiteApi(http);
 
     let navigation = [];
+    let footer = [];
 
     try {
         navigation = await siteApi.pages.getNavigation();
@@ -27,8 +28,14 @@ async function bootstrap() {
         console.error('Failed to load navigation', error);
     }
 
+    try {
+        footer = await siteApi.pages.getFooter();
+    } catch (error) {
+        console.error('Failed to load footer', error);
+    }
+
     createApp(App)
-        .use(createSitePlugin({ appConfig, navigation, siteApi }))
+        .use(createSitePlugin({ appConfig, navigation, footer, siteApi }))
         .use(createAppRouter())
         .mount('#app');
 }

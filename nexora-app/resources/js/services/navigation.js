@@ -27,6 +27,14 @@ export function isNavigationItemActive(route, item) {
         return route.name === 'projects' || route.name === 'projects.view';
     }
 
+    if (item.route_name === 'news') {
+        return route.name === 'news' || route.name === 'news.view';
+    }
+
+    if (item.route_name === 'articles') {
+        return route.name === 'articles' || route.name === 'articles.view';
+    }
+
     if (item.route_name === 'page') {
         return route.name === 'page' && route.params.slug === item.slug;
     }

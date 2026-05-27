@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Models\ApiIntegration;
 use App\Observers\ApiIntegrationObserver;
+use App\Repositories\Contracts\BlogPostRepositoryInterface;
 use App\Repositories\Contracts\OrderRepositoryInterface;
 use App\Repositories\Contracts\PageRepositoryInterface;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use App\Repositories\Contracts\TagRepositoryInterface;
+use App\Repositories\BlogPostRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\PageRepository;
 use App\Repositories\ProjectRepository;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PageRepositoryInterface::class, PageRepository::class);
         $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
         $this->app->bind(TagRepositoryInterface::class, TagRepository::class);
+        $this->app->bind(BlogPostRepositoryInterface::class, BlogPostRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
 
         $this->app->singleton(IntegrationManager::class);

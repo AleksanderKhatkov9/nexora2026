@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             ApiIntegrationSeeder::class,
             TagsSeeder::class,
             ProjectSeeder::class,
+            BlogPostSeeder::class,
             PageSeeder::class,
             OrderSeeder::class,
         ]);

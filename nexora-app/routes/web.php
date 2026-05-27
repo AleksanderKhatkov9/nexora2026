@@ -13,6 +13,8 @@ Route::get('/sitemap.xml', \App\Http\Controllers\SitemapController::class)->name
 Route::get('/', IndexController::class)->name('home');
 Route::get('/pricing', IndexController::class)->name('pricing');
 Route::get('/projects/{any?}', IndexController::class)->where('any', '.*')->name('projects');
+Route::get('/news/{any?}', IndexController::class)->where('any', '.*')->name('news');
+Route::get('/articles/{any?}', IndexController::class)->where('any', '.*')->name('articles');
 Route::get('/{slug}', IndexController::class)
     ->where('slug', '[a-z0-9\-]+')
     ->name('page');

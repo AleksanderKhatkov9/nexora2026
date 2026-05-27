@@ -9,6 +9,7 @@ use App\Nova\Dashboards\SiteAnalytics;
 use App\Nova\ApiIntegration as NovaApiIntegration;
 use App\Nova\User as NovaUser;
 use App\Nova\Order as NovaOrder;
+use App\Nova\BlogPost as NovaBlogPost;
 use App\Nova\Page as NovaPage;
 use App\Nova\Project as NovaProject;
 use App\Nova\Tags as NovaTags;
@@ -49,6 +50,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(NovaPage::class),
                     MenuItem::resource(NovaTags::class),
                     MenuItem::resource(NovaProject::class),
+                    MenuItem::resource(NovaBlogPost::class),
                     MenuItem::resource(NovaOrder::class),
                 ])->icon('document-text')->collapsable(),
 

@@ -15,4 +15,12 @@ class PageRepository implements PageRepositoryInterface
             ->limit($limit)
             ->get();
     }
+
+    public function getActiveBySlug(string $slug): ?Page
+    {
+        return Page::query()
+            ->where('active', true)
+            ->where('slug', $slug)
+            ->first();
+    }
 }

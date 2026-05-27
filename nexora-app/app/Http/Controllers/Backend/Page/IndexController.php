@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Backend\Page;
 
 use App\Http\Controllers\Controller;
 use App\Services\PageService;
-use App\Support\PortfolioData;
 use Illuminate\Http\JsonResponse;
 
 class IndexController extends Controller
@@ -13,19 +12,22 @@ class IndexController extends Controller
 
     public function __invoke()
     {
-        return view('backend.page.index');
-    }
-
-    public function index_projects()
-    {
-        return view('projects', [
-            'tags' => PortfolioData::tags(),
-            'projects' => PortfolioData::projects(),
-        ]);
+        return view('index');
     }
 
     public function indexPage(): JsonResponse
     {
         return response()->json($this->pageService->getIndexData(), 200);
+    }
+
+    public function showHome(): JsonResponse
+    {
+        $data = $this->pageService->getHomeData();
+
+        if (! $data) {
+            return response()->json(['message' => 'Home page not found'], 404);
+        }
+
+        return response()->json(['data' => $data], 200);
     }
 }

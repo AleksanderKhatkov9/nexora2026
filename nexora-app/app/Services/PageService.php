@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\PageResource;
 use App\Repositories\Contracts\PageRepositoryInterface;
 
 class PageService
@@ -13,7 +14,18 @@ class PageService
     public function getIndexData(): array
     {
         return [
-            'pages' => $this->pageRepository->getAllActive()->toArray(),
+            'pages' => PageResource::collection($this->pageRepository->getAllActive())->resolve(),
         ];
+    }
+
+    public function getHomeData(): ?array
+    {
+        $page = $this->pageRepository->getActiveBySlug('home');
+
+        if (! $page) {
+            return null;
+        }
+
+        return (new PageResource($page))->resolve();
     }
 }

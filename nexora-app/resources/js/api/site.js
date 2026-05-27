@@ -1,0 +1,10 @@
+export async function fetchHomePage() {
+    const { data } = await window.axios.get('/api/page/home');
+    return data.data;
+}
+
+export async function fetchProjectsPortfolio(tag = null) {
+    const params = tag && tag !== 'all' ? { tag } : {};
+    const { data } = await window.axios.get('/api/projects', { params });
+    return data.data;
+}

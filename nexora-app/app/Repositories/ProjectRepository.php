@@ -15,4 +15,19 @@ class ProjectRepository implements ProjectRepositoryInterface
             ->limit($limit)
             ->get();
     }
+
+    public function getAllActiveWithTags(?string $tagSlug = null, int $limit = 200): Collection
+    {
+        $query = Project::query()
+            ->where('active', true)
+            ->with('tags')
+            ->orderByDesc('year')
+            ->orderByDesc('id');
+
+        if ($tagSlug && $tagSlug !== 'all') {
+            $query->whereHas('tags', fn ($builder) => $builder->where('slug', $tagSlug));
+        }
+
+        return $query->limit($limit)->get();
+    }
 }

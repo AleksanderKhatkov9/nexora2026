@@ -111,7 +111,8 @@ html {
 }
 
 .landing-nav a:hover,
-.landing-nav a.is-active {
+.landing-nav a.is-active,
+.landing-nav a.router-link-active {
     color: var(--nx-accent);
 }
 
@@ -198,7 +199,8 @@ html {
     font-weight: 500;
 }
 
-.landing-mobile-nav a.is-active {
+.landing-mobile-nav a.is-active,
+.landing-mobile-nav a.router-link-active {
     color: var(--nx-accent);
 }
 

@@ -24,17 +24,17 @@ trait InteractsWithYandexWebmaster
         return is_numeric($range) ? (int) $range : $default;
     }
 
-    protected function unavailableValue(string $suffix = 'API не настроен'): ValueResult
+    protected function unavailableValue(string $suffix = 'настройте в Nova → API-интеграции'): ValueResult
     {
         return (new ValueResult)->result(0)->suffix('— '.$suffix);
     }
 
-    protected function unavailableTrend(string $suffix = 'API не настроен'): TrendResult
+    protected function unavailableTrend(string $suffix = 'настройте в Nova → API-интеграции'): TrendResult
     {
         return (new TrendResult)->result(0)->suffix('— '.$suffix)->trend([]);
     }
 
-    protected function unavailablePartition(string $suffix = 'API не настроен'): PartitionResult
+    protected function unavailablePartition(string $suffix = 'настройте в Nova → API-интеграции'): PartitionResult
     {
         return new PartitionResult([
             $suffix => 1,

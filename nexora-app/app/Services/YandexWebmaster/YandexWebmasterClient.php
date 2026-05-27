@@ -3,19 +3,21 @@
 namespace App\Services\YandexWebmaster;
 
 use App\Exceptions\YandexWebmasterException;
-use Illuminate\Http\Client\PendingRequest;
+use App\Services\Integrations\IntegrationManager;
 use Illuminate\Support\Facades\Http;
 
 class YandexWebmasterClient
 {
+    private const DRIVER = 'yandex_webmaster';
+
     public function __construct(
-        private readonly ?string $token,
+        private readonly IntegrationManager $integrations,
         private readonly string $baseUrl,
     ) {}
 
     public function isConfigured(): bool
     {
-        return filled($this->token);
+        return filled($this->token());
     }
 
     /**
@@ -28,7 +30,10 @@ class YandexWebmasterClient
             throw YandexWebmasterException::notConfigured();
         }
 
-        $response = $this->request()->get($this->buildUrl($path, $query));
+        $response = Http::withToken((string) $this->token())
+            ->acceptJson()
+            ->timeout(20)
+            ->get($this->buildUrl($path, $query));
 
         if ($response->failed()) {
             throw YandexWebmasterException::fromResponse($response);
@@ -63,10 +68,10 @@ class YandexWebmasterClient
         return $this->baseUrl.$path.'?'.implode('&', $parts);
     }
 
-    private function request(): PendingRequest
+    private function token(): ?string
     {
-        return Http::withToken((string) $this->token)
-            ->acceptJson()
-            ->timeout(20);
+        $token = $this->integrations->resolve(self::DRIVER)->credential('oauth_token');
+
+        return filled($token) ? (string) $token : null;
     }
 }

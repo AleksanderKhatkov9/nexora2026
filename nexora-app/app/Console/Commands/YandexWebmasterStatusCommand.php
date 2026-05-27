@@ -43,7 +43,7 @@ class YandexWebmasterStatusCommand extends Command
         }
 
         if (! $service->isEnabled()) {
-            $this->comment('Задайте YANDEX_WEBMASTER_ENABLED=true и YANDEX_WEBMASTER_OAUTH_TOKEN в .env');
+            $this->comment('Включите интеграцию в Nova → API-интеграции → Яндекс.Вебмастер или задайте YANDEX_WEBMASTER_* в .env');
 
             return self::FAILURE;
         }

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Nova\Dashboards\Main;
 use App\Nova\Dashboards\OrdersAnalytics;
 use App\Nova\Dashboards\SiteAnalytics;
+use App\Nova\ApiIntegration as NovaApiIntegration;
 use App\Nova\User as NovaUser;
 use App\Nova\Order as NovaOrder;
 use App\Nova\Page as NovaPage;
@@ -35,6 +36,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 MenuSection::dashboard(OrdersAnalytics::class)->icon('chart-bar'),
                 MenuSection::dashboard(SiteAnalytics::class)->icon('globe-alt'),
                 
+                MenuSection::make('Система', [
+                    MenuItem::resource(NovaApiIntegration::class),
+                ])->icon('cog')->collapsable(),
+
                 MenuSection::make('Пользователи', [
                     MenuItem::resource(NovaUser::class),
                     MenuItem::resource(UserRole::class),

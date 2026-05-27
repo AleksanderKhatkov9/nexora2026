@@ -3,19 +3,26 @@
 namespace App\Services\YandexWebmaster;
 
 use App\Exceptions\YandexWebmasterException;
+use App\Integrations\ResolvedIntegration;
+use App\Services\Integrations\IntegrationManager;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class YandexWebmasterService
 {
+    private const DRIVER = 'yandex_webmaster';
+
     public function __construct(
         private readonly YandexWebmasterClient $client,
+        private readonly IntegrationManager $integrations,
     ) {}
 
     public function isEnabled(): bool
     {
-        return (bool) config('yandex.webmaster.enabled') && $this->client->isConfigured();
+        $config = $this->integrationConfig();
+
+        return $config->enabled && filled($config->credential('oauth_token'));
     }
 
     /**
@@ -31,7 +38,9 @@ class YandexWebmasterService
      */
     public function getConnectionStatus(): array
     {
-        if (! config('yandex.webmaster.enabled')) {
+        $config = $this->integrationConfig();
+
+        if (! $config->enabled) {
             return [
                 'configured' => false,
                 'enabled' => false,
@@ -39,11 +48,11 @@ class YandexWebmasterService
                 'host_id' => null,
                 'host_url' => null,
                 'verified' => null,
-                'message' => 'Интеграция отключена (YANDEX_WEBMASTER_ENABLED=false).',
+                'message' => 'Интеграция отключена. Включите её в Nova → API-интеграции → Яндекс.Вебмастер.',
             ];
         }
 
-        if (! $this->client->isConfigured()) {
+        if (! filled($config->credential('oauth_token'))) {
             return [
                 'configured' => false,
                 'enabled' => true,
@@ -51,7 +60,7 @@ class YandexWebmasterService
                 'host_id' => null,
                 'host_url' => null,
                 'verified' => null,
-                'message' => 'Задайте YANDEX_WEBMASTER_OAUTH_TOKEN в .env.',
+                'message' => 'Укажите OAuth-токен в Nova → API-интеграции или в .env (YANDEX_WEBMASTER_OAUTH_TOKEN).',
             ];
         }
 
@@ -73,8 +82,8 @@ class YandexWebmasterService
                 'configured' => true,
                 'enabled' => true,
                 'user_id' => null,
-                'host_id' => config('yandex.webmaster.host_id'),
-                'host_url' => config('yandex.webmaster.site_url'),
+                'host_id' => $config->setting('host_id'),
+                'host_url' => $config->setting('site_url'),
                 'verified' => null,
                 'message' => $exception->getMessage(),
             ];
@@ -167,6 +176,11 @@ class YandexWebmasterService
         return $trend;
     }
 
+    private function integrationConfig(): ResolvedIntegration
+    {
+        return $this->integrations->resolve(self::DRIVER);
+    }
+
     /**
      * @return array{user_id: int, host_id: string}
      */
@@ -180,7 +194,7 @@ class YandexWebmasterService
 
     private function userId(): int
     {
-        $ttl = max((int) config('yandex.webmaster.cache_ttl'), 60);
+        $ttl = $this->cacheTtl();
 
         return (int) Cache::remember('yandex.webmaster.user-id', $ttl, function () {
             $payload = $this->client->get('/user');
@@ -191,13 +205,13 @@ class YandexWebmasterService
 
     private function hostId(): string
     {
-        $configuredHostId = config('yandex.webmaster.host_id');
+        $configuredHostId = $this->integrationConfig()->setting('host_id');
 
         if (filled($configuredHostId)) {
             return (string) $configuredHostId;
         }
 
-        $ttl = max((int) config('yandex.webmaster.cache_ttl'), 60);
+        $ttl = $this->cacheTtl();
 
         return (string) Cache::remember('yandex.webmaster.host-id', $ttl, function () {
             return (string) ($this->resolveHost()['host_id'] ?? '');
@@ -212,7 +226,7 @@ class YandexWebmasterService
         $userId = $this->userId();
         $payload = $this->client->get("/user/{$userId}/hosts");
         $hosts = $payload['hosts'] ?? [];
-        $targetHost = $this->normalizeHost((string) config('yandex.webmaster.site_url'));
+        $targetHost = $this->normalizeHost((string) $this->integrationConfig()->setting('site_url', config('app.url')));
 
         foreach ($hosts as $host) {
             $ascii = $this->normalizeHost((string) ($host['ascii_host_url'] ?? ''));
@@ -227,7 +241,7 @@ class YandexWebmasterService
             return $hosts[0];
         }
 
-        throw YandexWebmasterException::hostNotFound((string) config('yandex.webmaster.site_url'));
+        throw YandexWebmasterException::hostNotFound((string) $this->integrationConfig()->setting('site_url'));
     }
 
     /**
@@ -262,11 +276,14 @@ class YandexWebmasterService
      */
     private function remember(string $key, callable $callback): array
     {
-        $ttl = max((int) config('yandex.webmaster.cache_ttl'), 60);
-
         /** @var array<string, mixed> $result */
-        $result = Cache::remember("yandex.webmaster.{$key}", $ttl, $callback);
+        $result = Cache::remember("yandex.webmaster.{$key}", $this->cacheTtl(), $callback);
 
         return $result;
+    }
+
+    private function cacheTtl(): int
+    {
+        return max((int) $this->integrationConfig()->setting('cache_ttl', 3600), 60);
     }
 }

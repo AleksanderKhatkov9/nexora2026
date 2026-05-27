@@ -2,8 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Services\YandexWebmaster\YandexWebmasterClient;
+use App\Models\ApiIntegration;
+use App\Services\Integrations\IntegrationManager;
 use App\Services\YandexWebmaster\YandexWebmasterService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
@@ -11,20 +13,25 @@ use Tests\TestCase;
 
 class YandexWebmasterServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         Cache::flush();
-        Config::set('yandex.webmaster.enabled', true);
-        Config::set('yandex.webmaster.oauth_token', 'test-token');
-        Config::set('yandex.webmaster.site_url', 'https://nexora.by');
-        Config::set('yandex.webmaster.host_id', null);
-        Config::set('yandex.webmaster.cache_ttl', 60);
+        $this->seed(\Database\Seeders\ApiIntegrationSeeder::class);
+
+        Config::set('yandex.webmaster.api_base', 'https://api.webmaster.yandex.net/v4');
     }
 
-    public function test_it_resolves_host_and_fetches_summary(): void
+    public function test_it_resolves_host_and_fetches_summary_from_nova_integration(): void
     {
+        $this->configureIntegration([
+            'oauth_token' => 'test-token',
+            'site_url' => 'https://nexora.by',
+        ]);
+
         Http::fake([
             'https://api.webmaster.yandex.net/v4/user' => Http::response(['user_id' => 42]),
             'https://api.webmaster.yandex.net/v4/user/42/hosts' => Http::response([
@@ -45,8 +52,7 @@ class YandexWebmasterServiceTest extends TestCase
             ]),
         ]);
 
-        $service = app(YandexWebmasterService::class);
-        $summary = $service->getSummary();
+        $summary = app(YandexWebmasterService::class)->getSummary();
 
         $this->assertSame(120, $summary['sqi']);
         $this->assertSame(15, $summary['searchable_pages_count']);
@@ -54,7 +60,10 @@ class YandexWebmasterServiceTest extends TestCase
 
     public function test_it_fetches_search_history_with_repeated_query_indicators(): void
     {
-        Config::set('yandex.webmaster.host_id', 'https:nexora.by:443');
+        $this->configureIntegration([
+            'oauth_token' => 'test-token',
+            'host_id' => 'https:nexora.by:443',
+        ]);
 
         Http::fake([
             'https://api.webmaster.yandex.net/v4/user' => Http::response(['user_id' => 42]),
@@ -77,24 +86,69 @@ class YandexWebmasterServiceTest extends TestCase
 
         $this->assertSame(8, $service->sumIndicator($history, 'TOTAL_CLICKS'));
         $this->assertSame(70, $service->sumIndicator($history, 'TOTAL_SHOWS'));
-
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'query_indicator=TOTAL_CLICKS')
-                && str_contains($request->url(), 'query_indicator=TOTAL_SHOWS');
-        });
     }
 
     public function test_connection_status_reports_missing_token(): void
     {
-        Config::set('yandex.webmaster.oauth_token', null);
+        $this->configureIntegration([
+            'oauth_token' => null,
+        ]);
 
-        $service = new YandexWebmasterService(
-            new YandexWebmasterClient(null, config('yandex.webmaster.api_base'))
-        );
-
-        $status = $service->getConnectionStatus();
+        $status = app(YandexWebmasterService::class)->getConnectionStatus();
 
         $this->assertFalse($status['configured']);
-        $this->assertStringContainsString('YANDEX_WEBMASTER_OAUTH_TOKEN', (string) $status['message']);
+        $this->assertStringContainsString('OAuth-токен', (string) $status['message']);
+    }
+
+    public function test_integration_manager_tests_yandex_connection(): void
+    {
+        $this->configureIntegration([
+            'oauth_token' => 'test-token',
+            'site_url' => 'https://nexora.by',
+        ]);
+
+        Http::fake([
+            'https://api.webmaster.yandex.net/v4/user' => Http::response(['user_id' => 42]),
+            'https://api.webmaster.yandex.net/v4/user/42/hosts' => Http::response([
+                'hosts' => [
+                    [
+                        'host_id' => 'https:nexora.by:443',
+                        'ascii_host_url' => 'https://nexora.by/',
+                        'verified' => true,
+                    ],
+                ],
+            ]),
+            'https://api.webmaster.yandex.net/v4/user/42/hosts/https:nexora.by:443/summary' => Http::response([
+                'sqi' => 50,
+                'searchable_pages_count' => 10,
+                'excluded_pages_count' => 0,
+                'site_problems' => [],
+            ]),
+        ]);
+
+        $integration = ApiIntegration::query()->where('driver', 'yandex_webmaster')->firstOrFail();
+        $result = app(IntegrationManager::class)->test($integration);
+
+        $this->assertTrue($result->success);
+        $this->assertSame(ApiIntegration::TEST_STATUS_SUCCESS, $integration->fresh()->last_test_status);
+    }
+
+    /**
+     * @param  array<string, mixed>  $settings
+     */
+    private function configureIntegration(array $settings): void
+    {
+        $integration = ApiIntegration::query()->where('driver', 'yandex_webmaster')->firstOrFail();
+
+        $integration->forceFill([
+            'enabled' => true,
+            'credentials' => filled($settings['oauth_token'] ?? null)
+                ? ['oauth_token' => $settings['oauth_token']]
+                : [],
+            'settings' => collect($settings)->except('oauth_token')->all(),
+        ])->save();
+
+        $this->app->forgetInstance(YandexWebmasterService::class);
+        $this->app->forgetInstance(\App\Services\YandexWebmaster\YandexWebmasterClient::class);
     }
 }

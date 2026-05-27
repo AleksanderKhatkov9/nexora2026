@@ -1,119 +1,79 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
-import { fetchPageBySlug } from '../../api/site';
+import { useRoute } from 'vue-router';
+import { RouterLink } from 'vue-router';
+import AsyncState from '../ui/AsyncState.vue';
+import { useCmsPage } from '../../composables/useCmsPage.js';
+import { useSiteApi } from '../../composables/useInjections.js';
 
 const route = useRoute();
-const page = ref(null);
-const loading = ref(true);
-const error = ref('');
+const api = useSiteApi();
 
-const loadPage = async () => {
-    const slug = route.params.slug;
-
-    loading.value = true;
-    error.value = '';
-    page.value = null;
-
-    try {
-        page.value = await fetchPageBySlug(slug);
-
-        const title = page.value?.seo_title || page.value?.title;
-        if (title) {
-            document.title = title;
-        }
-
-        if (page.value?.seo_description) {
-            const meta = document.querySelector('meta[name="description"]');
-            if (meta) {
-                meta.setAttribute('content', page.value.seo_description);
-            }
-        }
-    } catch (e) {
-        if (e.response?.status === 404) {
-            error.value = 'Страница не найдена.';
-        } else {
-            error.value = 'Не удалось загрузить страницу.';
-        }
-        console.error(e);
-    } finally {
-        loading.value = false;
-    }
-};
-
-onMounted(loadPage);
-watch(() => route.params.slug, loadPage);
+const { loading, error, page } = useCmsPage(
+    () => api.pages.getBySlug(route.params.slug),
+    {
+        watchSource: () => route.params.slug,
+        notFoundMessage: 'Страница не найдена.',
+        errorMessage: 'Не удалось загрузить страницу.',
+    },
+);
 </script>
 
 <template>
     <main class="landing-main">
-        <div v-if="loading" class="landing-container landing-state">
-            <p>Загрузка…</p>
-        </div>
+        <AsyncState :loading="loading" :error="error">
+            <template #error-actions>
+                <RouterLink :to="{ name: 'home' }" class="landing-btn landing-btn--outline landing-state__back">
+                    ← На главную
+                </RouterLink>
+            </template>
 
-        <div v-else-if="error" class="landing-container landing-state landing-state--error">
-            <p>{{ error }}</p>
-            <RouterLink :to="{ name: 'home' }" class="landing-btn landing-btn--outline landing-state__back">
-                ← На главную
-            </RouterLink>
-        </div>
+            <template v-if="page">
+                <section class="landing-page-head">
+                    <div class="landing-container">
+                        <nav class="landing-breadcrumb" aria-label="Хлебные крошки">
+                            <RouterLink :to="{ name: 'home' }">Создание сайтов</RouterLink>
+                            <span class="landing-breadcrumb__sep">/</span>
+                            <span class="landing-breadcrumb__current">{{ page.title }}</span>
+                        </nav>
 
-        <template v-else-if="page">
-            <section class="landing-page-head">
-                <div class="landing-container">
-                    <nav class="landing-breadcrumb" aria-label="Хлебные крошки">
-                        <RouterLink :to="{ name: 'home' }">Создание сайтов</RouterLink>
-                        <span class="landing-breadcrumb__sep">/</span>
-                        <span class="landing-breadcrumb__current">{{ page.title }}</span>
-                    </nav>
+                        <h1>{{ page.title }}</h1>
 
-                    <h1>{{ page.title }}</h1>
-
-                    <p v-if="page.description" class="landing-page-intro">
-                        {{ page.description }}
-                    </p>
-                </div>
-            </section>
-
-            <section class="landing-generic-page">
-                <div class="landing-container">
-                    <img
-                        v-if="page.image"
-                        :src="page.image"
-                        :alt="page.title"
-                        class="landing-generic-page__image"
-                    >
-
-                    <div v-if="page.content?.body" class="landing-generic-page__body">
-                        <p>{{ page.content.body }}</p>
+                        <p v-if="page.description" class="landing-page-intro">
+                            {{ page.description }}
+                        </p>
                     </div>
+                </section>
 
-                    <div v-else-if="page.content && Object.keys(page.content).length" class="landing-generic-page__json">
-                        <pre>{{ JSON.stringify(page.content, null, 2) }}</pre>
-                    </div>
+                <section class="landing-generic-page">
+                    <div class="landing-container">
+                        <img
+                            v-if="page.image"
+                            :src="page.image"
+                            :alt="page.title"
+                            class="landing-generic-page__image"
+                        >
 
-                    <div class="landing-generic-page__actions">
-                        <RouterLink :to="{ name: 'home', hash: '#contact' }" class="landing-btn landing-btn--primary">
-                            Оставить заявку
-                        </RouterLink>
+                        <div v-if="page.content?.body" class="landing-generic-page__body">
+                            <p>{{ page.content.body }}</p>
+                        </div>
+
+                        <div v-else-if="page.content && Object.keys(page.content).length" class="landing-generic-page__json">
+                            <pre>{{ JSON.stringify(page.content, null, 2) }}</pre>
+                        </div>
+
+                        <div class="landing-generic-page__actions">
+                            <RouterLink :to="{ name: 'home', hash: '#contact' }" class="landing-btn landing-btn--primary">
+                                Оставить заявку
+                            </RouterLink>
+                        </div>
                     </div>
-                </div>
-            </section>
-        </template>
+                </section>
+            </template>
+        </AsyncState>
     </main>
 </template>
 
 <style scoped>
-.landing-state {
-    padding: 48px 0;
-    text-align: center;
-    color: var(--nx-text-muted);
-}
-
-.landing-state--error {
-    color: #b42318;
-}
-
 .landing-state__back {
     display: inline-flex;
     margin-top: 20px;

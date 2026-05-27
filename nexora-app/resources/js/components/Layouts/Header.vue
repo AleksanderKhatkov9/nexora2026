@@ -1,54 +1,18 @@
 <script setup>
-import { inject, ref } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
+import { RouterLink } from 'vue-router';
+import { useSiteNavigation } from '../../composables/useSiteNavigation.js';
 
 defineProps({
     faviconUrl: { type: String, default: '/favicon.svg' },
 });
 
-const navigation = inject('navigation', []);
-const route = useRoute();
-const mobileMenuOpen = ref(false);
-
-const closeMobileMenu = () => {
-    mobileMenuOpen.value = false;
-};
-
-const navLinkTo = (item) => {
-    if (item.type === 'anchor') {
-        return { name: 'home', hash: item.hash };
-    }
-
-    if (item.type === 'external') {
-        return item.external_url;
-    }
-
-    if (item.route_name === 'page') {
-        return { name: 'page', params: { slug: item.slug } };
-    }
-
-    return { name: item.route_name };
-};
-
-const isNavActive = (item) => {
-    if (item.type === 'anchor') {
-        return route.name === 'home' && route.hash === item.hash;
-    }
-
-    if (item.type === 'external') {
-        return false;
-    }
-
-    if (item.route_name === 'projects') {
-        return route.name === 'projects' || route.name === 'projects.view';
-    }
-
-    if (item.route_name === 'page') {
-        return route.name === 'page' && route.params.slug === item.slug;
-    }
-
-    return route.name === item.route_name;
-};
+const {
+    navigation,
+    mobileMenuOpen,
+    closeMobileMenu,
+    navLinkTo,
+    isNavActive,
+} = useSiteNavigation();
 </script>
 
 <template>

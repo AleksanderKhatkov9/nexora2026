@@ -1,9 +1,9 @@
 <script setup>
-import { inject } from 'vue';
+import { useAppConfig } from '../composables/useInjections.js';
 import Header from './Layouts/Header.vue';
 import Footer from './Layouts/Footer.vue';
 
-const appConfig = inject('appConfig');
+const appConfig = useAppConfig();
 </script>
 
 <template>

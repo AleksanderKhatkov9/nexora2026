@@ -40,7 +40,6 @@ class Tags extends Resource
                 ->updateRules('unique:tags,slug,{{resourceId}}'),
 
             BelongsToMany::make('Проекты', 'projects', Project::class),
-            BelongsToMany::make('Страницы', 'pages', Page::class),
 
             DateTime::make('Создан', 'created_at')->sortable()->exceptOnForms(),
             DateTime::make('Обновлён', 'updated_at')->sortable()->exceptOnForms(),

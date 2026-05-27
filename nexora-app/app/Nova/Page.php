@@ -4,7 +4,6 @@ namespace App\Nova;
 
 use App\Nova\Filters\ActiveStatus;
 use App\Models\Page as PageModel;
-use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
@@ -112,8 +111,6 @@ class Page extends Resource
                 ->nullable()
                 ->hideFromIndex()
                 ->help('Для типа «Якорь на главной», например: #services'),
-
-            BelongsToMany::make('Теги', 'tags', Tags::class),
 
             Text::make('SEO Title', 'seo_title')->nullable()->hideFromIndex(),
             Textarea::make('SEO Description', 'seo_description')->nullable()->hideFromIndex(),

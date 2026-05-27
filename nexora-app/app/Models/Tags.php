@@ -23,9 +23,4 @@ class Tags extends Model
             ->withTimestamps();
     }
 
-    public function pages(): BelongsToMany
-    {
-        return $this->belongsToMany(Page::class, 'page_tags', 'tag_id', 'page_id')
-            ->withTimestamps();
-    }
 }

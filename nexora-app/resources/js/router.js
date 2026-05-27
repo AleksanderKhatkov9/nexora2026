@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import IndexPage from './components/Page/IndexPage.vue';
 import ProjectsPage from './components/Page/ProjectsPage.vue';
+import ProjectViewPage from './components/Page/ProjectViewPage.vue';
 
 const routes = [
     {
@@ -13,6 +14,14 @@ const routes = [
         name: 'projects',
         component: ProjectsPage,
     },
+
+    {
+        path: '/projects/page/:id',
+        name: 'projects.view',
+        component: ProjectViewPage,
+    },
+
+    
 ];
 
 export default createRouter({

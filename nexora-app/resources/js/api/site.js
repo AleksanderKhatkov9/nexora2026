@@ -8,3 +8,9 @@ export async function fetchProjectsPortfolio(tag = null) {
     const { data } = await window.axios.get('/api/projects', { params });
     return data.data;
 }
+
+
+export async function fetchProjectShow(id) {
+    const { data } = await window.axios.get(`/api/projects/${id}`);
+    return data.data;
+}

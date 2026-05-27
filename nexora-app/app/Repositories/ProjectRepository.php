@@ -30,4 +30,12 @@ class ProjectRepository implements ProjectRepositoryInterface
 
         return $query->limit($limit)->get();
     }
+
+    public function findActiveById(int $id): ?Project
+    {
+        return Project::query()
+            ->where('active', true)
+            ->with(['tags', 'images'])
+            ->find($id);
+    }
 }

@@ -24,4 +24,15 @@ class ProjectController extends Controller
             'data' => $this->projectService->getPortfolioData($tag),
         ], 200);
     }
+
+    public function show(int $id): JsonResponse
+    {
+        $data = $this->projectService->getProjectById($id);
+
+        if (! $data) {
+            return response()->json(['message' => 'Project not found'], 404);
+        }
+
+        return response()->json(['data' => $data], 200);
+    }
 }

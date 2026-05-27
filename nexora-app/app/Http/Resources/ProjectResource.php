@@ -17,9 +17,13 @@ class ProjectResource extends JsonResource
             'year' => $this->year,
             'initial' => $this->initial,
             'short_description' => $this->short_description,
+            'full_description' => $this->when($this->full_description, $this->full_description),
             'cover_image' => $this->cover_image,
             'site_url' => $this->site_url,
+            'seo_title' => $this->when($this->seo_title, $this->seo_title),
+            'seo_description' => $this->when($this->seo_description, $this->seo_description),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
+            'images' => ProjectImageResource::collection($this->whenLoaded('images')),
         ];
     }
 }

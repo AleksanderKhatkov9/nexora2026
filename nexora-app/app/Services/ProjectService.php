@@ -43,4 +43,15 @@ class ProjectService
             )->resolve(),
         ];
     }
+
+    public function getProjectById(int $id): ?array
+    {
+        $project = $this->projectRepository->findActiveById($id);
+
+        if (! $project) {
+            return null;
+        }
+
+        return (new ProjectResource($project))->resolve();
+    }
 }

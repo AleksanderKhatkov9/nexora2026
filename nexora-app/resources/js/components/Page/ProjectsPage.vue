@@ -89,40 +89,22 @@ onMounted(loadPortfolio);
             <section class="landing-projects-section">
                 <div class="landing-container">
                     <div class="landing-projects-toolbar" role="tablist" aria-label="Фильтр проектов">
-                        <button
-                            v-for="tag in allTags"
-                            :key="tag.slug"
-                            type="button"
-                            class="landing-tag"
-                            :class="{ 'is-active': activeTag === tag.slug }"
-                            role="tab"
-                            :aria-selected="activeTag === tag.slug ? 'true' : 'false'"
-                            @click="selectTag(tag.slug)"
-                        >
+                        <button v-for="tag in allTags" :key="tag.slug" type="button" class="landing-tag"
+                            :class="{ 'is-active': activeTag === tag.slug }" role="tab"
+                            :aria-selected="activeTag === tag.slug ? 'true' : 'false'" @click="selectTag(tag.slug)">
                             {{ tag.name }}
                         </button>
                     </div>
 
-                    <p
-                        v-if="filteredProjects.length === 0"
-                        class="landing-projects-empty is-visible"
-                    >
+                    <p v-if="filteredProjects.length === 0" class="landing-projects-empty is-visible">
                         По выбранной категории проектов пока нет.
                     </p>
 
                     <div v-else class="landing-projects-grid">
-                        <article
-                            v-for="project in filteredProjects"
-                            :key="project.id"
-                            class="landing-project-card"
-                        >
+                        <article v-for="project in filteredProjects" :key="project.id" class="landing-project-card">
                             <div class="landing-project-card__thumb" aria-hidden="true">
-                                <img
-                                    v-if="project.cover_image"
-                                    :src="project.cover_image"
-                                    :alt="project.title"
-                                    class="landing-project-card__image"
-                                >
+                                <img v-if="project.cover_image" :src="project.cover_image" :alt="project.title"
+                                    class="landing-project-card__image">
                                 <span v-else>{{ project.initial }}</span>
                             </div>
                             <div class="landing-project-card__body">
@@ -134,16 +116,13 @@ onMounted(loadPortfolio);
                                 <p v-if="project.short_description" class="landing-project-card__desc">
                                     {{ project.short_description }}
                                 </p>
-                                <a
-                                    v-if="project.site_url"
-                                    :href="project.site_url"
+                                <RouterLink
+                                    :to="{ name: 'projects.view', params: { id: project.id } }"
                                     class="landing-project-card__link"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
                                 >
                                     Смотреть проект →
-                                </a>
-                                <span v-else class="landing-project-card__link">Смотреть проект →</span>
+                                </RouterLink>
+
                             </div>
                         </article>
                     </div>

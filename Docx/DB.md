@@ -12,8 +12,9 @@
 | Домен | Таблицы | Назначение |
 |-------|---------|------------|
 | **Аутентификация и роли** | `users`, `user_roles`, `password_reset_tokens`, `personal_access_tokens` | Пользователи Nova/API, роли, 2FA, Sanctum |
-| **Контент** | `pages`, `projects`, `tags`, `page_tags`, `project_tags`, `project_images` | Страницы сайта, портфолио, теги, галереи |
+| **Контент** | `pages`, `projects`, `tags`, `project_tags`, `project_images`, `blog_posts` | Страницы сайта, портфолио, теги, галереи, новости и статьи |
 | **Заявки** | `orders` | Обратная связь / заказы (без FK на другие сущности) |
+| **Интеграции** | `api_integrations` | Настройки внешних API |
 | **Инфраструктура Laravel** | `failed_jobs` | Очередь неуспешных задач |
 
 ---
@@ -24,10 +25,6 @@
 erDiagram
     user_roles ||--o{ users : "user_role_id"
     users ||--o{ personal_access_tokens : "tokenable (morph)"
-
-    pages ||--o{ page_tags : ""
-    tags ||--o{ page_tags : ""
-    pages }o--o{ tags : "M:N через page_tags"
 
     projects ||--o{ project_tags : ""
     tags ||--o{ project_tags : ""
@@ -41,7 +38,23 @@ erDiagram
         string phone
         string email
         text message
+        string channel
         string status
+    }
+
+    blog_posts {
+        bigint id PK
+        string slug UK
+        string title
+        string kind
+        boolean active
+    }
+
+    api_integrations {
+        bigint id PK
+        string slug UK
+        string driver UK
+        boolean enabled
     }
 ```
 
@@ -82,6 +95,15 @@ erDiagram
         string link
         string slug
         boolean active
+        boolean show_in_menu
+        boolean show_in_footer
+        string footer_group
+        int footer_order
+        string footer_label
+        int menu_order
+        string menu_label
+        string menu_type
+        string menu_hash
         string seo_title
         text seo_description
         text seo_keywords
@@ -93,13 +115,6 @@ erDiagram
         bigint id PK
         string name UK
         string slug UK
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    page_tags {
-        bigint page_id PK_FK
-        bigint tag_id PK_FK
         timestamp created_at
         timestamp updated_at
     }
@@ -146,6 +161,7 @@ erDiagram
         string phone
         string email
         text message
+        string channel
         string status
         timestamp created_at
         timestamp updated_at
@@ -180,12 +196,41 @@ erDiagram
         timestamp failed_at
     }
 
+    blog_posts {
+        bigint id PK
+        string slug UK
+        string title
+        string kind
+        text excerpt
+        longtext content
+        string cover_image
+        string author
+        timestamp published_at
+        boolean active
+        string seo_title
+        text seo_description
+        text seo_keywords
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    api_integrations {
+        bigint id PK
+        string slug UK
+        string driver UK
+        string name
+        boolean enabled
+        text credentials
+        json settings
+        timestamp last_tested_at
+        string last_test_status
+        text last_test_message
+        timestamp created_at
+        timestamp updated_at
+    }
+
     user_roles ||--o{ users : "1:N"
     users ||--o{ personal_access_tokens : "polymorphic 1:N"
-
-    pages ||--|{ page_tags : "1:N"
-    tags ||--|{ page_tags : "1:N"
-    pages }o--o{ tags : "M:N"
 
     projects ||--|{ project_tags : "1:N"
     tags ||--|{ project_tags : "1:N"
@@ -201,13 +246,12 @@ erDiagram
 | От | К | Тип | FK / pivot | ON DELETE |
 |----|---|-----|------------|-----------|
 | `user_roles` | `users` | 1:N | `users.user_role_id` → `user_roles.id` | `SET NULL` |
-| `pages` | `tags` | M:N | `page_tags` (`page_id`, `tag_id`) | `CASCADE` (обе стороны pivot) |
 | `projects` | `tags` | M:N | `project_tags` (`project_id`, `tag_id`) | `CASCADE` |
 | `projects` | `project_images` | 1:N | `project_images.project_id` | `CASCADE` |
 | `users` | `personal_access_tokens` | 1:N (polymorphic) | `tokenable_type`, `tokenable_id` | — (Laravel default) |
 | `orders` | — | — | Изолированная таблица | — |
 
-**Общий тег:** сущность `tags` используется и для страниц, и для проектов через разные pivot-таблицы.
+**Тег:** сущность `tags` используется для проектов через `project_tags`. Таблица `page_tags` удалена миграцией `2026_05_27_120000_drop_page_tags_table.php`.
 
 ---
 
@@ -261,14 +305,23 @@ CMS-страницы сайта.
 | `content` | `text` | nullable |
 | `image` | `string` | nullable |
 | `link` | `string` | nullable |
-| `slug` | `string` | nullable (route key в модели) |
+| `slug` | `string` | UNIQUE, NOT NULL после миграции hardening |
 | `active` | `boolean` | default `false`, **index** |
+| `show_in_menu` | `boolean` | default `false` |
+| `show_in_footer` | `boolean` | default `false` |
+| `footer_group` | `string(50)` | nullable, CHECK `sections/services/legal` после миграции hardening |
+| `footer_order` | `unsignedInteger` | default `0` |
+| `footer_label` | `string` | nullable |
+| `menu_order` | `unsignedInteger` | default `0` |
+| `menu_label` | `string` | nullable |
+| `menu_type` | `string` | default `route`, CHECK `route/anchor/external` после миграции hardening |
+| `menu_hash` | `string` | nullable |
 | `seo_title` | `string` | nullable |
 | `seo_description` | `text` | nullable |
 | `seo_keywords` | `text` | nullable |
 | `created_at`, `updated_at` | `timestamp` | — |
 
-**Модель:** `App\Models\Page` → `belongsToMany(Tags)` через `page_tags`
+**Модель:** `App\Models\Page`; route key: `slug`; связи с `Tags` нет.
 
 ---
 
@@ -283,21 +336,9 @@ CMS-страницы сайта.
 | `slug` | `string` | UNIQUE |
 | `created_at`, `updated_at` | `timestamp` | — |
 
-**Модель:** `App\Models\Tags` → `projects()`, `pages()` (M:N)
+**Модель:** `App\Models\Tags` → `projects()` (M:N)
 
 **Сидер:** `TagsSeeder` (данные из `App\Support\PortfolioData::tags()`)
-
----
-
-### `page_tags` (pivot)
-
-| Колонка | Тип | Ограничения |
-|---------|-----|-------------|
-| `page_id` | `bigint` | PK, FK → `pages.id` CASCADE |
-| `tag_id` | `bigint` | PK, FK → `tags.id` CASCADE |
-| `created_at`, `updated_at` | `timestamp` | — |
-
-**Модель pivot:** `App\Models\PageTags`
 
 ---
 
@@ -367,16 +408,66 @@ CMS-страницы сайта.
 | Колонка | Тип | Ограничения |
 |---------|-----|-------------|
 | `id` | `bigint` | PK |
-| `name` | `string` | nullable |
-| `phone` | `string` | nullable |
-| `email` | `string` | nullable |
+| `name` | `string` | NOT NULL после миграции hardening |
+| `phone` | `string` | NOT NULL после миграции hardening |
+| `email` | `string` | NOT NULL после миграции hardening |
 | `message` | `text` | nullable |
-| `status` | `string` | default `'new'` |
+| `channel` | `string` | nullable, CHECK `email/phone/telegram/viber` после миграции hardening |
+| `status` | `string` | default `'new'`, CHECK `new/in_progress/done/cancelled` после миграции hardening |
 | `created_at`, `updated_at` | `timestamp` | — |
 
 **Статусы (модель):** `new`, `in_progress`, `done`, `cancelled` — см. `Order::statuses()`
 
 **Связей с другими таблицами нет.**
+
+---
+
+### `blog_posts`
+
+Новости и статьи.
+
+| Колонка | Тип | Ограничения |
+|---------|-----|-------------|
+| `id` | `bigint` | PK |
+| `slug` | `string` | UNIQUE |
+| `title` | `string` | NOT NULL |
+| `kind` | `string(32)` | CHECK `news/article` после миграции hardening |
+| `excerpt` | `text` | nullable |
+| `content` | `longText` | nullable |
+| `cover_image` | `string` | nullable |
+| `author` | `string` | nullable |
+| `published_at` | `timestamp` | nullable, index |
+| `active` | `boolean` | default `false` |
+| `seo_title` | `string` | nullable |
+| `seo_description` | `text` | nullable |
+| `seo_keywords` | `text` | nullable |
+| `created_at`, `updated_at` | `timestamp` | — |
+
+**Индексы:** `(kind, active)`, `published_at`, `(kind, active, published_at, id)` после миграции hardening.
+
+**Модель:** `App\Models\BlogPost`; route key: `slug`.
+
+---
+
+### `api_integrations`
+
+Настройки внешних API.
+
+| Колонка | Тип | Ограничения |
+|---------|-----|-------------|
+| `id` | `bigint` | PK |
+| `slug` | `string` | UNIQUE |
+| `driver` | `string` | UNIQUE |
+| `name` | `string` | — |
+| `enabled` | `boolean` | default `false` |
+| `credentials` | `text` | nullable, encrypted array cast в модели |
+| `settings` | `json` | nullable |
+| `last_tested_at` | `timestamp` | nullable |
+| `last_test_status` | `string(32)` | nullable, CHECK `success/failed` после миграции hardening |
+| `last_test_message` | `text` | nullable |
+| `created_at`, `updated_at` | `timestamp` | — |
+
+**Модель:** `App\Models\ApiIntegration`.
 
 ---
 
@@ -416,12 +507,19 @@ CMS-страницы сайта.
 2026_05_19_101500_add_user_role_id_to_users_table
 2026_05_25_082128_create_pages_table
 2026_05_25_084350_create_tags_table
-2026_05_25_084610_create_page_tags_table
 2026_05_25_085047_create_projects_table
 2026_05_25_085147_create_project_images_table
 2026_05_25_085244_create_project_tags_table
 2026_05_25_085533_create_orders_table
 2026_05_26_100000_add_slug_to_projects_table
+2026_05_27_100000_add_unique_index_to_pages_slug
+2026_05_27_120000_add_channel_to_orders_table
+2026_05_27_120000_drop_page_tags_table
+2026_05_28_100000_add_menu_fields_to_pages_table
+2026_05_29_100000_add_footer_fields_to_pages_table
+2026_05_30_100000_create_api_integrations_table
+2026_05_31_100000_create_blog_posts_table
+2026_06_01_100000_harden_domain_constraints_and_indexes
 ```
 
 ---
@@ -431,9 +529,12 @@ CMS-страницы сайта.
 ```
 DatabaseSeeder
 ├── UserSeeder
+├── ApiIntegrationSeeder
 ├── TagsSeeder      → tags
 ├── ProjectSeeder   → projects + project_tags
-└── PageSeeder      → pages
+├── BlogPostSeeder  → blog_posts
+├── PageSeeder      → pages
+└── OrderSeeder     → orders
 ```
 
 ---
@@ -444,11 +545,12 @@ DatabaseSeeder
 user_roles
     └── users ──► personal_access_tokens (morph)
 
-tags ◄──► pages      (page_tags)
 tags ◄──► projects   (project_tags)
 projects ──► project_images
 
 orders (standalone)
+blog_posts (standalone)
+api_integrations (standalone)
 
 password_reset_tokens  (по email, без FK)
 failed_jobs            (standalone)

@@ -16,9 +16,9 @@ export function useAsyncResource(loader, options = {}) {
             return result;
         } catch (cause) {
             if (cause?.response?.status === 404) {
-                error.value = options.notFoundMessage || 'Страница не найдена.';
+                error.value = resolveOption(options.notFoundMessage, 'Страница не найдена.');
             } else {
-                error.value = options.errorMessage || 'Не удалось загрузить данные.';
+                error.value = resolveOption(options.errorMessage, 'Не удалось загрузить данные.');
             }
 
             data.value = null;
@@ -35,4 +35,8 @@ export function useAsyncResource(loader, options = {}) {
         data,
         execute,
     };
+}
+
+function resolveOption(value, fallback) {
+    return (typeof value === 'function' ? value() : value) || fallback;
 }

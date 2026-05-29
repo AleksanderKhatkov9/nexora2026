@@ -19,6 +19,11 @@ class ApiIntegration extends Resource
 {
     public static $model = \App\Models\ApiIntegration::class;
 
+    /**
+     * Скрыт из админки; настройки интеграций — через .env / config.
+     */
+    public static $displayInNavigation = false;
+
     public static $title = 'name';
 
     public static $search = [
@@ -33,6 +38,11 @@ class ApiIntegration extends Resource
     public static function singularLabel(): string
     {
         return 'API-интеграция';
+    }
+
+    public static function authorizedToViewAny(\Illuminate\Http\Request $request): bool
+    {
+        return false;
     }
 
     public static function authorizedToCreate(\Illuminate\Http\Request $request): bool

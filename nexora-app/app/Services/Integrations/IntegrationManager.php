@@ -45,12 +45,14 @@ class IntegrationManager
             );
         }
 
-        return $this->resolveFromEnv($driver, $definition);
+        return $this->resolveFromFallback($driver, $definition);
     }
 
     public function isEnabled(string $driver): bool
     {
-        return $this->resolve($driver)->enabled && filled($this->resolve($driver)->credentials);
+        $resolved = $this->resolve($driver);
+
+        return $resolved->enabled && filled($resolved->credentials);
     }
 
     public function test(ApiIntegration $integration): IntegrationTestResult
@@ -105,33 +107,19 @@ class IntegrationManager
     /**
      * @param  array<string, mixed>  $definition
      */
-    private function resolveFromEnv(string $driver, array $definition): ResolvedIntegration
+    private function resolveFromFallback(string $driver, array $definition): ResolvedIntegration
     {
-        $fallback = $definition['env_fallback'] ?? [];
-        $enabled = filter_var(env($fallback['enabled'] ?? '', false), FILTER_VALIDATE_BOOLEAN);
-        $credentials = [];
-        $settings = [];
-
-        foreach ($fallback['credentials'] ?? [] as $key => $envKey) {
-            $value = env($envKey);
-            if (filled($value)) {
-                $credentials[$key] = $value;
-            }
-        }
-
-        foreach ($fallback['settings'] ?? [] as $key => $envKey) {
-            $value = env($envKey);
-            if (filled($value)) {
-                $settings[$key] = $value;
-            }
-        }
+        $fallback = $definition['fallback'] ?? [];
+        $enabled = filter_var($fallback['enabled'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $credentials = $this->filterFilled($fallback['credentials'] ?? []);
+        $settings = $this->filterFilled($fallback['settings'] ?? []);
 
         return new ResolvedIntegration(
             driver: $driver,
             enabled: $enabled,
             credentials: $credentials,
             settings: $this->mergeSettings($definition, $settings),
-            source: 'env',
+            source: 'config',
         );
     }
 

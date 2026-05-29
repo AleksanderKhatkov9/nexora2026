@@ -42,18 +42,10 @@ function getDefaultOgImage() {
 }
 
 function setMetaName(name, content) {
-    if (!content) {
-        return;
-    }
-
     upsertMeta('meta', 'name', name, content);
 }
 
 function setMetaProperty(property, content) {
-    if (!content) {
-        return;
-    }
-
     upsertMeta('meta', 'property', property, content);
 }
 

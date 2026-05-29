@@ -2,8 +2,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite",
-        "build": "vite build"
+        "dev": "vite --host 0.0.0.0",
+        "build": "vite build",
+        "watch": "vite --host 0.0.0.0"
     },
     "devDependencies": {
         "axios": "^1.6.4",

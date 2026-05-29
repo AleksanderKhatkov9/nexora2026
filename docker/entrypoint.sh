@@ -8,7 +8,7 @@ if [ ! -f vendor/autoload.php ]; then
   composer install --no-interaction --prefer-dist --optimize-autoloader
 fi
 
-if [ ! -d node_modules/vue ]; then
+if [ ! -d node_modules ] || [ ! -d node_modules/vue ] || [ ! -d node_modules/vue-router ]; then
   echo "Installing npm dependencies..."
   if [ -f package-lock.json ]; then
     npm ci --no-audit --no-fund

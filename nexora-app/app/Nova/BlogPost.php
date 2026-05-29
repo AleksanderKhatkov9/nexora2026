@@ -13,6 +13,8 @@ use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
+use Laravel\Nova\Fields\Trix;
+use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
 
@@ -41,55 +43,70 @@ class BlogPost extends Resource
         return [
             ID::make()->sortable(),
 
-            Select::make('Тип', 'kind')
+            Select::make('Раздел', 'kind')
                 ->options(BlogPostModel::KINDS)
                 ->rules('required')
                 ->displayUsingLabels()
-                ->sortable(),
+                ->sortable()
+                ->help('Новость → /news/…, Статья → /articles/…'),
 
-            Text::make('Заголовок', 'title')->rules('required', 'max:255'),
+            Text::make('Заголовок', 'title')->rules('required', 'max:255')->sortable(),
 
             Text::make('Slug', 'slug')
                 ->rules('required', 'max:255')
                 ->creationRules('unique:blog_posts,slug')
-                ->updateRules('unique:blog_posts,slug,{{resourceId}}')
-                ->help('URL: /news/{slug} или /articles/{slug}'),
+                ->updateRules('unique:blog_posts,slug,{{resourceId}}'),
 
-            Image::make('Обложка', 'cover_image')
-                ->disk('public')
-                ->path('blog')
+            Boolean::make('Опубликована', 'active')->sortable(),
+
+            DateTime::make('Дата', 'published_at')
+                ->sortable()
                 ->nullable()
-                ->thumbnail(fn ($value) => PublicAssetUrl::url($value))
-                ->preview(fn ($value) => PublicAssetUrl::url($value)),
+                ->help('Сортировка в ленте'),
 
-            Textarea::make('Анонс', 'excerpt')
-                ->nullable()
-                ->rows(3)
-                ->help('Краткий текст для списка'),
+            URL::make('На сайте', fn () => $this->publicUrl())
+                ->displayUsing(fn () => $this->publicUrl())
+                ->onlyOnDetail(),
 
-            Textarea::make('Текст', 'content')
-                ->nullable()
-                ->rows(10)
-                ->alwaysShow()
-                ->hideFromIndex(),
+            Panel::make('Материал', [
+                Image::make('Обложка', 'cover_image')
+                    ->disk('public')
+                    ->path('blog')
+                    ->nullable()
+                    ->thumbnail(fn ($value) => PublicAssetUrl::url($value))
+                    ->preview(fn ($value) => PublicAssetUrl::url($value)),
 
-            Text::make('Автор', 'author')->nullable(),
+                Textarea::make('Анонс', 'excerpt')
+                    ->nullable()
+                    ->rows(3)
+                    ->help('Краткий текст в списке новостей/статей.'),
 
-            DateTime::make('Дата публикации', 'published_at')
-                ->nullable()
-                ->help('Используется для сортировки в ленте'),
+                Trix::make('Текст', 'content')
+                    ->nullable()
+                    ->alwaysShow()
+                    ->hideFromIndex(),
 
-            Boolean::make('Активна', 'active'),
+                Text::make('Автор', 'author')->nullable(),
+            ]),
 
             Panel::make('SEO', [
-                Text::make('SEO Title', 'seo_title')->nullable()->hideFromIndex(),
-                Textarea::make('SEO Description', 'seo_description')->nullable()->hideFromIndex(),
-                Text::make('SEO Keywords', 'seo_keywords')->nullable()->hideFromIndex(),
+                Text::make('SEO Title', 'seo_title')->nullable(),
+                Textarea::make('SEO Description', 'seo_description')->nullable()->rows(2),
+                Text::make('SEO Keywords', 'seo_keywords')->nullable(),
             ]),
 
             DateTime::make('Создана', 'created_at')->exceptOnForms()->sortable(),
             DateTime::make('Обновлена', 'updated_at')->exceptOnForms()->sortable(),
         ];
+    }
+
+    protected function publicUrl(): ?string
+    {
+        if (! $this->resource?->slug) {
+            return null;
+        }
+
+        return url($this->resource->publicPath());
     }
 
     public function filters(NovaRequest $request): array

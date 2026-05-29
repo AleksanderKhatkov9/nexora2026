@@ -21,7 +21,7 @@ class IntegrationManagerTest extends TestCase
         ]);
     }
 
-    public function test_it_prefers_database_credentials_over_env(): void
+    public function test_it_prefers_database_credentials_over_config_fallback(): void
     {
         $this->seed(\Database\Seeders\ApiIntegrationSeeder::class);
 
@@ -36,5 +36,24 @@ class IntegrationManagerTest extends TestCase
 
         $this->assertSame('database', $resolved->source);
         $this->assertSame('db-token', $resolved->credential('oauth_token'));
+    }
+
+    public function test_it_resolves_config_fallback_when_database_credentials_are_empty(): void
+    {
+        config()->set('integrations.drivers.yandex_webmaster.fallback', [
+            'enabled' => true,
+            'credentials' => [
+                'oauth_token' => 'config-token',
+            ],
+            'settings' => [
+                'site_url' => 'https://nexora.by',
+            ],
+        ]);
+
+        $resolved = app(IntegrationManager::class)->resolve('yandex_webmaster');
+
+        $this->assertSame('config', $resolved->source);
+        $this->assertTrue($resolved->enabled);
+        $this->assertSame('config-token', $resolved->credential('oauth_token'));
     }
 }

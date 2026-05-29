@@ -1,66 +1,66 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+﻿# Nexora App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel + Vue приложение для публичного сайта Nexora, CMS/CRM в Laravel Nova и интеграции с внешними API.
 
-## About Laravel
+## Стек
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Слой | Технологии |
+|------|------------|
+| Backend | PHP 8.2, Laravel 10, Laravel Nova 5, Sanctum |
+| Frontend | Vue 3, Vue Router, Vite, Axios |
+| Database | MySQL 8 |
+| Infra | Docker Compose, Nginx, PHP-FPM, phpMyAdmin |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Быстрый старт через Docker
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Команды выполняются из корня репозитория `d:\Projects\nexora2026`.
 
-## Learning Laravel
+```powershell
+docker compose up -d --build
+docker compose exec app php artisan migrate
+docker compose exec app php artisan db:seed
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Сайт доступен по `http://localhost/` или `http://nexora.loc/`, если домен настроен в hosts.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Frontend
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```powershell
+npm ci
+npm run build
+```
 
-## Laravel Sponsors
+В Docker frontend собирается через `docker/entrypoint.sh`, если нет `public/build/manifest.json`.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Тесты
 
-### Premium Partners
+Тестовая БД: `nexora_test`.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```powershell
+docker compose up -d db
+docker compose run --rm test
+```
 
-## Contributing
+Локальный запуск с хоста требует установленный PHP и доступ к MySQL.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Основные разделы
 
-## Code of Conduct
+| Раздел | Файлы |
+|--------|-------|
+| Public SPA | `resources/js`, `resources/views/index.blade.php` |
+| API | `routes/api.php`, `app/Http/Controllers/Backend` |
+| CMS/CRM | `app/Nova` |
+| Models/DB | `app/Models`, `database/migrations` |
+| Integrations | `config/integrations.php`, `app/Services/Integrations`, `app/Services/YandexWebmaster` |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Документация
 
-## Security Vulnerabilities
+Подробная документация находится в `../Docx/`:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Файл | Назначение |
+|------|------------|
+| `info.md` | структура и архитектура |
+| `DB.md` | база данных и связи |
+| `Docker.md` | Docker-запуск и команды |
+| `Test.md` | тестовая БД и запуск тестов |
+| `FullProjectAnalysis.md` | полный анализ проекта и рисков |

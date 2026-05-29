@@ -256,13 +256,14 @@ resources/js/
 | `Page` | `pages` | контент страниц (главная, портфолио, контакты) |
 | `Project` | `projects` | карточки портфолио |
 | `Tags` | `tags` | категории для фильтра проектов |
-| `Order` | `orders` | заявки с формы (CMS готова, API формы — в планах) |
+| `BlogPost` | `blog_posts` | новости и статьи |
+| `ApiIntegration` | `api_integrations` | настройки внешних API |
+| `Order` | `orders` | заявки с формы |
 | `User` | `users` | пользователи Nova |
 
 Связи:
 
 - `Project` ↔ `Tags` — many-to-many через `project_tags`
-- `Page` ↔ `Tags` — many-to-many через `page_tags`
 - `Project` → `ProjectImage` — one-to-many (галерея проекта)
 
 ---
@@ -400,6 +401,9 @@ sequenceDiagram
 
 | Файл | Содержание |
 |------|------------|
+| [FullProjectAnalysis.md](./FullProjectAnalysis.md) | полный анализ проекта: backend, frontend, БД, Docker, тесты, риски |
+| [Analysis.md](./Analysis.md) | анализ архитектуры, проверок и рисков проекта |
+| [DatabaseModelAnalysis.md](./DatabaseModelAnalysis.md) | анализ архитектуры БД и соответствия Laravel-моделей |
 | [DB.md](./DB.md) | таблицы, миграции, ER-диаграммы |
 | [Docker.md](./Docker.md) | запуск, команды, troubleshooting |
 | [Git.md](./Git.md) | работа с Git |

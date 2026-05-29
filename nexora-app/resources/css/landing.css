@@ -1301,3 +1301,41 @@ html {
         padding: 36px;
     }
 }
+
+/* Rich text from Nova Trix (blog, generic pages) */
+.landing-rich-text {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--nx-text);
+}
+
+.landing-rich-text :deep(p) {
+    margin: 0 0 1em;
+}
+
+.landing-rich-text :deep(p:last-child) {
+    margin-bottom: 0;
+}
+
+.landing-rich-text :deep(h2),
+.landing-rich-text :deep(h3) {
+    margin: 1.5em 0 0.5em;
+    line-height: 1.3;
+}
+
+.landing-rich-text :deep(ul),
+.landing-rich-text :deep(ol) {
+    margin: 0 0 1em;
+    padding-left: 1.4em;
+}
+
+.landing-rich-text :deep(a) {
+    color: var(--nx-accent);
+    text-decoration: underline;
+}
+
+.landing-rich-text :deep(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}

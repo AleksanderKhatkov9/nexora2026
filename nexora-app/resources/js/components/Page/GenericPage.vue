@@ -1,9 +1,11 @@
 <script setup>
+import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { RouterLink } from 'vue-router';
 import AsyncState from '../ui/AsyncState.vue';
 import { useCmsPage } from '../../composables/useCmsPage.js';
 import { useSiteApi } from '../../composables/useInjections.js';
+import { sanitizeHtml } from '../../services/sanitizeHtml.js';
 
 const route = useRoute();
 const api = useSiteApi();
@@ -16,6 +18,8 @@ const { loading, error, page } = useCmsPage(
         errorMessage: 'Не удалось загрузить страницу.',
     },
 );
+
+const safeBody = computed(() => sanitizeHtml(page.value?.content?.body));
 </script>
 
 <template>
@@ -53,9 +57,11 @@ const { loading, error, page } = useCmsPage(
                             class="landing-generic-page__image"
                         >
 
-                        <div v-if="page.content?.body" class="landing-generic-page__body">
-                            <p>{{ page.content.body }}</p>
-                        </div>
+                        <div
+                            v-if="safeBody"
+                            class="landing-generic-page__body landing-rich-text"
+                            v-html="safeBody"
+                        />
 
                         <div class="landing-generic-page__actions">
                             <RouterLink :to="{ name: 'home', hash: '#contact' }" class="landing-btn landing-btn--primary">

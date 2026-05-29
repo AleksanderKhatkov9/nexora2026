@@ -40,15 +40,15 @@ return [
                 ],
             ],
             'tester' => App\Integrations\Testers\YandexWebmasterTester::class,
-            'env_fallback' => [
-                'enabled' => 'YANDEX_WEBMASTER_ENABLED',
+            'fallback' => [
+                'enabled' => env('YANDEX_WEBMASTER_ENABLED', false),
                 'credentials' => [
-                    'oauth_token' => 'YANDEX_WEBMASTER_OAUTH_TOKEN',
+                    'oauth_token' => env('YANDEX_WEBMASTER_OAUTH_TOKEN'),
                 ],
                 'settings' => [
-                    'site_url' => 'YANDEX_WEBMASTER_SITE_URL',
-                    'host_id' => 'YANDEX_WEBMASTER_HOST_ID',
-                    'cache_ttl' => 'YANDEX_WEBMASTER_CACHE_TTL',
+                    'site_url' => env('YANDEX_WEBMASTER_SITE_URL'),
+                    'host_id' => env('YANDEX_WEBMASTER_HOST_ID'),
+                    'cache_ttl' => env('YANDEX_WEBMASTER_CACHE_TTL'),
                 ],
             ],
         ],

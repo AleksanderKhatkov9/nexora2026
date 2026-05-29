@@ -5,6 +5,7 @@ import { RouterLink } from 'vue-router';
 import AsyncState from '../ui/AsyncState.vue';
 import { useCmsPage } from '../../composables/useCmsPage.js';
 import { useSiteApi } from '../../composables/useInjections.js';
+import { sanitizeHtml } from '../../services/sanitizeHtml.js';
 
 const props = defineProps({
     kind: {
@@ -27,11 +28,13 @@ const { loading, error, page: post } = useCmsPage(
         ? api.blog.getNewsBySlug(route.params.slug)
         : api.blog.getArticleBySlug(route.params.slug)),
     {
-        watchSource: () => route.params.slug,
-        notFoundMessage: notFoundMessage.value,
-        errorMessage: isNews.value ? 'Не удалось загрузить новость.' : 'Не удалось загрузить статью.',
+        watchSource: () => [route.params.slug, props.kind],
+        notFoundMessage: () => notFoundMessage.value,
+        errorMessage: () => (isNews.value ? 'Не удалось загрузить новость.' : 'Не удалось загрузить статью.'),
     },
 );
+
+const safeContent = computed(() => sanitizeHtml(post.value?.content));
 </script>
 
 <template>
@@ -75,9 +78,11 @@ const { loading, error, page: post } = useCmsPage(
                             <img :src="post.cover_image" :alt="post.title">
                         </div>
 
-                        <div v-if="post.content" class="landing-blog-view__content">
-                            <p>{{ post.content }}</p>
-                        </div>
+                        <div
+                            v-if="safeContent"
+                            class="landing-blog-view__content landing-rich-text"
+                            v-html="safeContent"
+                        />
 
                         <div class="landing-blog-view__actions">
                             <RouterLink :to="{ name: listRouteName }" class="landing-btn landing-btn--outline">

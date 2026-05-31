@@ -1,10 +1,13 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { isNavigationItemActive, resolveNavigationLink } from '../services/navigation.js';
 import { useNavigationItems } from './useInjections.js';
 
+const HIDDEN_HEADER_SLUGS = new Set(['nav-team', 'nav-contact', 'articles']);
+
 export function useSiteNavigation() {
-    const navigation = useNavigationItems();
+    const navigationItems = useNavigationItems();
+    const navigation = computed(() => navigationItems.filter((item) => !HIDDEN_HEADER_SLUGS.has(item.slug)));
     const route = useRoute();
     const mobileMenuOpen = ref(false);
 

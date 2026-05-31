@@ -9,7 +9,6 @@
             <nav class="landing-nav" aria-label="Основное меню">
                 <a href="{{ route('home') }}#services">Услуги</a>
                 <a href="{{ route('projects') }}" @class(['is-active' => request()->routeIs('projects')])>Портфолио</a>
-                <a href="{{ route('home') }}#contact">Контакты</a>
             </nav>
 
             <div class="landing-header__actions">
@@ -36,7 +35,6 @@
         <nav class="landing-mobile-nav" data-mobile-nav aria-label="Мобильное меню">
             <a href="{{ route('home') }}#services">Услуги</a>
             <a href="{{ route('projects') }}" @class(['is-active' => request()->routeIs('projects')])>Портфолио</a>
-            <a href="{{ route('home') }}#contact">Контакты</a>
             <a href="tel:+375291234567">+375 (29) 123-45-67</a>
         </nav>
     </div>

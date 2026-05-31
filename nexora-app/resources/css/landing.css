@@ -80,7 +80,6 @@ html {
 }
 
 .landing-logo {
-    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -98,7 +97,6 @@ html {
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #22c55e;
     box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.14);
 }
 

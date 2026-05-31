@@ -207,23 +207,6 @@ class PageSeeder extends Seeder
                 'seo_description' => 'Актуальные новости Nexora о разработке сайтов и digital-проектах.',
             ],
             [
-                'slug' => 'articles',
-                'title' => 'Статьи — Nexora',
-                'description' => 'Полезные материалы о создании сайтов, SEO и автоматизации бизнеса.',
-                'content' => null,
-                'active' => true,
-                'show_in_menu' => true,
-                'show_in_footer' => true,
-                'footer_group' => Page::FOOTER_GROUP_SECTIONS,
-                'footer_order' => 40,
-                'footer_label' => 'Статьи',
-                'menu_order' => 26,
-                'menu_label' => 'Статьи',
-                'menu_type' => 'route',
-                'seo_title' => 'Статьи о веб-разработке — Nexora',
-                'seo_description' => 'Статьи Nexora: как выбрать подрядчика, SEO, CMS и сопровождение сайтов.',
-            ],
-            [
                 'slug' => 'pricing',
                 'title' => 'Цены — Nexora',
                 'description' => 'Стоимость разработки сайтов, интернет-магазинов и порталов. Тарифы Nexora с прозрачным ценообразованием.',
@@ -241,24 +224,12 @@ class PageSeeder extends Seeder
                 'seo_description' => 'Тарифы на создание сайтов, корпоративных порталов и интернет-магазинов. Стоимость от 890 BYN.',
             ],
             [
-                'slug' => 'nav-team',
-                'title' => 'Подход',
-                'description' => null,
-                'content' => null,
-                'active' => true,
-                'show_in_menu' => false,
-                'menu_order' => 40,
-                'menu_label' => 'Подход',
-                'menu_type' => 'anchor',
-                'menu_hash' => '#team',
-            ],
-            [
                 'slug' => 'nav-contact',
                 'title' => 'Контакты',
                 'description' => null,
                 'content' => null,
                 'active' => true,
-                'show_in_menu' => true,
+                'show_in_menu' => false,
                 'menu_order' => 50,
                 'menu_label' => 'Контакты',
                 'menu_type' => 'anchor',
@@ -300,103 +271,6 @@ class PageSeeder extends Seeder
                 'footer_label' => 'О разработчике',
             ],
             [
-                'slug' => 'reviews',
-                'title' => 'Отзывы — Nexora',
-                'description' => 'Отзывы клиентов о работе Nexora.',
-                'content' => $trixBody(
-                    '<p>Отзывы клиентов скоро появятся здесь.</p>'.
-                    '<p>Пока можно посмотреть портфолио и обсудить задачу напрямую через форму на главной странице.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SECTIONS,
-                'footer_order' => 30,
-                'footer_label' => 'Отзывы',
-            ],
-            [
-                'slug' => 'faq',
-                'title' => 'Вопрос-ответ — Nexora',
-                'description' => 'Частые вопросы о разработке сайтов.',
-                'content' => $trixBody(
-                    '<h2>Частые вопросы</h2>'.
-                    '<p><strong>Можно ли начать с небольшого сайта?</strong><br>Да. Часто лучше запустить первую версию быстро, проверить спрос и развивать проект поэтапно.</p>'.
-                    '<p><strong>Работаете ли вы с готовыми сайтами?</strong><br>Да, я беру доработки, исправления, интеграции и техническое сопровождение существующих проектов.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SECTIONS,
-                'footer_order' => 40,
-                'footer_label' => 'Вопрос-ответ',
-            ],
-            [
-                'slug' => 'blog',
-                'title' => 'Блог — Nexora',
-                'description' => 'Статьи о веб-разработке и digital.',
-                'content' => $trixBody(
-                    '<p>Блог скоро будет доступен.</p>'.
-                    '<p>Здесь будут заметки о разработке, SEO, CMS, интеграциях и практических решениях для сайтов.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SECTIONS,
-                'footer_order' => 50,
-                'footer_label' => 'Статьи',
-            ],
-            [
-                'slug' => 'sitemap',
-                'title' => 'Карта сайта — Nexora',
-                'description' => 'Карта сайта Nexora.',
-                'content' => $trixBody(
-                    '<p>Полный список основных разделов сайта:</p>'.
-                    '<ul><li>Главная</li><li>Портфолио</li><li>Новости</li><li>Статьи</li><li>Цены</li><li>Контакты</li></ul>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SECTIONS,
-                'footer_order' => 70,
-                'footer_label' => 'Карта сайта',
-            ],
-            [
-                'slug' => 'services-web',
-                'title' => 'Создание сайтов — Nexora',
-                'description' => 'Разработка сайтов под ключ.',
-                'content' => $trixBody(
-                    '<p>Создаю сайты, лендинги и порталы на Laravel, WordPress, 1C-Битрикс и других платформах.</p>'.
-                    '<p>Подбираю решение под задачу: от простой посадочной страницы до сайта с личным кабинетом, каталогом и интеграциями.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 20,
-                'footer_label' => 'Создание сайтов',
-            ],
-            [
-                'slug' => 'services-mobile',
-                'title' => 'Мобильные приложения — Nexora',
-                'description' => 'Разработка мобильных приложений.',
-                'content' => $trixBody(
-                    '<p>Помогаю спроектировать мобильный сценарий и подготовить веб-основу для приложения.</p>'.
-                    '<p>Если задачу можно решить адаптивным веб-интерфейсом или PWA, предложу более быстрый и экономичный путь.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 30,
-                'footer_label' => 'Мобильные приложения',
-            ],
-            [
-                'slug' => 'services-seo',
-                'title' => 'Продвижение сайтов — Nexora',
-                'description' => 'SEO и продвижение сайтов.',
-                'content' => $trixBody(
-                    '<p>Готовлю техническую основу для продвижения в Яндекс и Google: структуру страниц, метаданные, sitemap, ЧПУ и базовую оптимизацию скорости.</p>'.
-                    '<p>Для дальнейшего роста можно подключать контент, аналитику и регулярные доработки.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 40,
-                'footer_label' => 'Продвижение сайтов',
-            ],
-            [
-                'slug' => 'services-design',
-                'title' => 'Дизайн сайтов — Nexora',
-                'description' => 'UI/UX дизайн сайтов.',
-                'content' => $trixBody(
-                    '<p>Проектирую интерфейсы, которые помогают пользователю быстро понять предложение и оставить заявку.</p>'.
-                    '<p>Фокусируюсь на структуре, читабельности, адаптивности и аккуратном визуальном стиле.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 50,
-                'footer_label' => 'Дизайн сайтов',
-            ],
-            [
                 'slug' => 'services-refactor',
                 'title' => 'Доработка сайтов — Nexora',
                 'description' => 'Доработка и расширение функционала сайтов.',
@@ -407,42 +281,6 @@ class PageSeeder extends Seeder
                 'footer_group' => Page::FOOTER_GROUP_SERVICES,
                 'footer_order' => 60,
                 'footer_label' => 'Доработка сайтов',
-            ],
-            [
-                'slug' => 'services-optimization',
-                'title' => 'Оптимизация сайтов — Nexora',
-                'description' => 'Оптимизация скорости и SEO сайтов.',
-                'content' => $trixBody(
-                    '<p>Провожу техническую оптимизацию сайта: скорость загрузки, базовые SEO-настройки, корректные метаданные, sitemap и проверка ошибок.</p>'.
-                    '<p>Цель — сделать сайт быстрее, понятнее для поисковых систем и удобнее для пользователей.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 70,
-                'footer_label' => 'Оптимизация сайтов',
-            ],
-            [
-                'slug' => 'services-support',
-                'title' => 'Поддержка сайтов — Nexora',
-                'description' => 'Техническая поддержка сайтов.',
-                'content' => $trixBody(
-                    '<p>Беру сайты на техническое сопровождение: обновления, резервные копии, мониторинг, исправление ошибок и небольшие доработки.</p>'.
-                    '<p>Формат поддержки можно подобрать под реальную нагрузку проекта.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 80,
-                'footer_label' => 'Поддержка сайтов',
-            ],
-            [
-                'slug' => 'services-hosting',
-                'title' => 'Хостинг для сайтов — Nexora',
-                'description' => 'Хостинг и размещение сайтов.',
-                'content' => $trixBody(
-                    '<p>Помогаю подобрать и настроить хостинг для сайта или веб-приложения.</p>'.
-                    '<p>Настраиваю домен, SSL, окружение, деплой и базовые меры надёжности.</p>'
-                ),
-                'footer_group' => Page::FOOTER_GROUP_SERVICES,
-                'footer_order' => 90,
-                'footer_label' => 'Хостинг для сайтов',
             ],
             [
                 'slug' => 'privacy',

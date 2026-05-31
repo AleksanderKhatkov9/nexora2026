@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Nexora — разработка и сопровождение веб-проектов под ключ. Современные сайты, порталы и автоматизация бизнес-процессов.">
+    <meta name="description" content="Nexora — личная разработка и сопровождение веб-проектов под ключ. Современные сайты, порталы и автоматизация бизнес-процессов.">
 
-    <title>Nexora — создание сайтов и веб-разработка</title>
+    <title>Nexora — частная разработка сайтов</title>
 
     @include('partials.landing.favicon')
 

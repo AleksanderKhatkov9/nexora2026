@@ -47,7 +47,7 @@ const {
                 <div class="landing-header__actions">
                     <a href="tel:+375291234567" class="landing-phone">+375 (29) 123-45-67</a>
                     <RouterLink :to="{ name: 'home', hash: '#contact' }" class="landing-btn landing-btn--primary">
-                        Обсудить проект
+                        Написать напрямую
                     </RouterLink>
 
                     <button

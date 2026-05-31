@@ -21,7 +21,7 @@ const appConfig = useAppConfig();
                     Nex<span>ora</span>
                 </RouterLink>
                 <p class="landing-footer__tagline">
-                    Разработка сайтов и веб-приложений
+                    Частная разработка сайтов и веб-приложений
                 </p>
                 <a href="tel:+375291234567" class="landing-footer__phone">
                     +375 (29) 123-45-67

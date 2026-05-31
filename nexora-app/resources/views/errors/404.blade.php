@@ -30,7 +30,7 @@
                 <ul class="error-page__links">
                     <li><a href="{{ url('/pricing') }}">Тарифы</a></li>
                     <li><a href="{{ url('/news') }}">Новости</a></li>
-                    <li><a href="{{ url('/') }}#contact">Связаться с нами</a></li>
+                    <li><a href="{{ url('/') }}#contact">Связаться со мной</a></li>
                 </ul>
             </div>
         </div>

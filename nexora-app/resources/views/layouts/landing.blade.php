@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="@yield('meta_description', 'Nexora — разработка и сопровождение веб-проектов под ключ.')">
+    <meta name="description" content="@yield('meta_description', 'Nexora — личная разработка и сопровождение веб-проектов под ключ.')">
 
     <title>@yield('title', 'Nexora')</title>
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import ContactForm from '../contact/ContactForm.vue';
 import AsyncState from '../ui/AsyncState.vue';
@@ -14,6 +14,47 @@ const { loading, error, page } = useCmsPage(
 );
 
 const sections = computed(() => page.value?.content ?? null);
+
+const heroStages = [
+    {
+        label: 'Аналитика',
+        title: 'Разбираю задачу лично',
+        text: 'Вникаю в продукт, аудиторию и цели бизнеса до первого прототипа.',
+    },
+    {
+        label: 'Дизайн',
+        title: 'Собираю живой интерфейс',
+        text: 'Прорабатываю визуальный ритм, сценарии и состояния ключевых экранов.',
+    },
+    {
+        label: 'Запуск',
+        title: 'Довожу до результата',
+        text: 'Подключаю интеграции, аналитику и помогаю улучшать показатели после релиза.',
+    },
+];
+
+const activeHeroStage = ref(0);
+const heroTiltStyle = ref({});
+
+const currentHeroStage = computed(() => heroStages[activeHeroStage.value]);
+
+function setHeroStage(index) {
+    activeHeroStage.value = index;
+}
+
+function handleHeroPointerMove(event) {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+
+    heroTiltStyle.value = {
+        transform: `perspective(900px) rotateX(${y * -6}deg) rotateY(${x * 8}deg) translateY(-4px)`,
+    };
+}
+
+function resetHeroTilt() {
+    heroTiltStyle.value = {};
+}
 </script>
 
 <template>
@@ -22,7 +63,7 @@ const sections = computed(() => page.value?.content ?? null);
             <template v-if="sections">
                 <section class="landing-hero">
                     <div class="landing-container landing-hero__grid">
-                        <div>
+                        <div class="landing-hero__copy">
                             <span class="landing-hero__eyebrow">{{ sections.hero?.eyebrow }}</span>
                             <h1>{{ sections.hero?.title }}</h1>
                             <p class="landing-hero__lead">{{ sections.hero?.lead }}</p>
@@ -36,10 +77,48 @@ const sections = computed(() => page.value?.content ?? null);
                             </div>
                         </div>
 
-                        <div class="landing-stats">
-                            <div v-for="stat in sections.stats" :key="stat.label" class="landing-stat">
-                                <span class="landing-stat__value">{{ stat.value }}</span>
-                                <span class="landing-stat__label">{{ stat.label }}</span>
+                        <div
+                            class="landing-hero__showcase"
+                            :style="heroTiltStyle"
+                            @pointermove="handleHeroPointerMove"
+                            @pointerleave="resetHeroTilt"
+                        >
+                            <div class="landing-dashboard">
+                                <div class="landing-dashboard__top">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <div class="landing-dashboard__body">
+                                    <p class="landing-dashboard__eyebrow">Проект в работе</p>
+                                    <h2>{{ currentHeroStage.title }}</h2>
+                                    <p>{{ currentHeroStage.text }}</p>
+
+                                    <div class="landing-dashboard__progress" aria-hidden="true">
+                                        <span :style="{ width: `${(activeHeroStage + 1) * 33.34}%` }"></span>
+                                    </div>
+
+                                    <div class="landing-dashboard__steps" role="tablist" aria-label="Этапы разработки">
+                                        <button
+                                            v-for="(stage, index) in heroStages"
+                                            :key="stage.label"
+                                            type="button"
+                                            :class="{ 'is-active': activeHeroStage === index }"
+                                            role="tab"
+                                            :aria-selected="activeHeroStage === index ? 'true' : 'false'"
+                                            @click="setHeroStage(index)"
+                                        >
+                                            {{ stage.label }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="landing-stats">
+                                <div v-for="stat in sections.stats" :key="stat.label" class="landing-stat">
+                                    <span class="landing-stat__value">{{ stat.value }}</span>
+                                    <span class="landing-stat__label">{{ stat.label }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -66,9 +145,9 @@ const sections = computed(() => page.value?.content ?? null);
 
                 <section id="portfolio" class="landing-section">
                     <div class="landing-container">
-                        <h2 class="landing-section__title">Автоматизация бизнес-процессов — наш профиль</h2>
+                        <h2 class="landing-section__title">Автоматизация бизнес-процессов — мой профиль</h2>
                         <p class="landing-section__subtitle">
-                            Реальные кейсы: порталы, кабинеты клиентов, интеграции и высоконагруженные системы.
+                            Реальные кейсы: порталы, кабинеты клиентов, интеграции и сложные веб-системы.
                         </p>
 
                         <div class="landing-portfolio">
@@ -87,9 +166,9 @@ const sections = computed(() => page.value?.content ?? null);
 
                 <section class="landing-section landing-section--alt">
                     <div class="landing-container">
-                        <h2 class="landing-section__title">Почему выбирают Nexora</h2>
+                        <h2 class="landing-section__title">Почему со мной удобно работать</h2>
                         <p class="landing-section__subtitle">
-                            Качественный сайт — лицо компании. Те, кто заботится об имидже, доверяют разработку нам.
+                            Вы общаетесь напрямую с разработчиком: без менеджерской прослойки, лишних согласований и студийной наценки.
                         </p>
 
                         <div class="landing-benefits">
@@ -101,31 +180,10 @@ const sections = computed(() => page.value?.content ?? null);
                     </div>
                 </section>
 
-                <section id="team" class="landing-section">
-                    <div class="landing-container">
-                        <h2 class="landing-section__title">Команда, которая создаст ваш проект</h2>
-                        <p class="landing-section__subtitle">
-                            Разработчики, дизайнеры, SEO-специалисты и менеджеры — каждый отвечает за свой участок работы.
-                        </p>
-
-                        <div class="landing-team">
-                            <article
-                                v-for="member in sections.team"
-                                :key="`${member.name}-${member.role}`"
-                                class="landing-member"
-                            >
-                                <div class="landing-member__avatar">{{ member.initial }}</div>
-                                <p class="landing-member__name">{{ member.name }}</p>
-                                <p class="landing-member__role">{{ member.role }}</p>
-                            </article>
-                        </div>
-                    </div>
-                </section>
-
                 <section class="landing-section landing-section--alt">
                     <div class="landing-container">
-                        <h2 class="landing-section__title">Нам доверяют</h2>
-                        <p class="landing-section__subtitle">Компании из e-commerce, финансов, недвижимости, ритейла и B2B.</p>
+                        <h2 class="landing-section__title">Мне доверяют</h2>
+                        <p class="landing-section__subtitle">Проекты из e-commerce, финансов, недвижимости, ритейла и B2B.</p>
 
                         <div class="landing-clients">
                             <span v-for="client in sections.clients" :key="client" class="landing-client">{{ client }}</span>
@@ -135,8 +193,8 @@ const sections = computed(() => page.value?.content ?? null);
 
                 <section class="landing-section">
                     <div class="landing-container">
-                        <h2 class="landing-section__title">Каждый занимается своим делом</h2>
-                        <p class="landing-section__subtitle">Слаженная работа отделов — залог качественного результата.</p>
+                        <h2 class="landing-section__title">Как я веду проект</h2>
+                        <p class="landing-section__subtitle">Прозрачный процесс без передачи задач между разными исполнителями.</p>
 
                         <div class="landing-anatomy">
                             <article v-for="department in sections.departments" :key="department.title" class="landing-brain-item">
@@ -153,9 +211,9 @@ const sections = computed(() => page.value?.content ?? null);
                 <section id="contact" class="landing-section landing-section--alt">
                     <div class="landing-container landing-contact">
                         <div>
-                            <h2 class="landing-section__title">Доверьте нам ваш проект</h2>
+                            <h2 class="landing-section__title">Расскажите мне о проекте</h2>
                             <p class="landing-section__subtitle" style="margin-bottom: 0;">
-                                Оставьте заявку — свяжемся в удобное время и обсудим задачи, сроки и бюджет.
+                                Оставьте заявку — я свяжусь в удобное время и обсудим задачи, сроки и бюджет.
                             </p>
                         </div>
 

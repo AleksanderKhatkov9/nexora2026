@@ -1,9 +1,9 @@
 <section id="contact" class="landing-section landing-section--alt">
     <div class="landing-container landing-contact">
         <div>
-            <h2 class="landing-section__title">Доверьте нам ваш проект</h2>
+            <h2 class="landing-section__title">Расскажите мне о проекте</h2>
             <p class="landing-section__subtitle" style="margin-bottom: 0;">
-                Оставьте заявку — свяжемся в удобное время и обсудим задачи, сроки и бюджет.
+                Оставьте заявку — я свяжусь в удобное время и обсудим задачи, сроки и бюджет.
             </p>
         </div>
 
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <button type="submit" class="landing-btn landing-btn--primary">Отправить заявку</button>
-            <p class="landing-form__note">* Мы делаем проекты, которые работают на ваш бизнес: продают, приносят прибыль и укрепляют имидж.</p>
+            <p class="landing-form__note">* Я делаю проекты, которые работают на ваш бизнес: продают, приносят прибыль и укрепляют имидж.</p>
         </form>
     </div>
 </section>

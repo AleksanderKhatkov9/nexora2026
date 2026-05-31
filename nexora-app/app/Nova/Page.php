@@ -7,7 +7,6 @@ use App\Nova\Filters\ActiveStatus;
 use App\Nova\Filters\PageSlugFilter;
 use App\Nova\PageContent\PageContentField;
 use Laravel\Nova\Fields\Boolean;
-use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Heading;
@@ -17,6 +16,7 @@ use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
+use Laravel\Nova\Fields\Trix;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Panel;
@@ -122,11 +122,12 @@ class Page extends Resource
                 Text::make('SEO Keywords', 'seo_keywords')->nullable(),
             ]),
 
-            Code::make('Контент (JSON)', 'content')
-                ->json()
+            Trix::make('Контент', 'content_body')
+                ->resolveUsing(fn () => data_get($this->resource?->content, 'body'))
                 ->readonly()
                 ->onlyOnDetail()
-                ->help('Для разработчиков. Редактируйте блоки в форме редактирования.'),
+                ->alwaysShow()
+                ->help('Основной текст страницы. Редактируется через Trix в форме редактирования.'),
 
             DateTime::make('Создана', 'created_at')->sortable()->exceptOnForms(),
             DateTime::make('Обновлена', 'updated_at')->sortable()->exceptOnForms(),

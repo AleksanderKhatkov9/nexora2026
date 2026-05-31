@@ -33,13 +33,13 @@ class HomePageFields
 
             Panel::make('Преимущества', self::benefitFields($resource)),
 
-            Panel::make('Команда', self::teamFields($resource)),
+            Panel::make('Этапы личной работы', self::teamFields($resource)),
 
             Panel::make('Клиенты', [
                 PageContentField::clients('Логотипы / названия клиентов', 'clients', $resource),
             ]),
 
-            Panel::make('Отделы', self::departmentFields($resource)),
+            Panel::make('Направления работы', self::departmentFields($resource)),
         ];
 
         return $fields;
@@ -120,11 +120,11 @@ class HomePageFields
     {
         $fields = [];
 
-        for ($i = 0; $i < 8; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $n = $i + 1;
-            $fields[] = PageContentField::text("Сотрудник {$n} — буква", "team.{$i}.initial", $resource);
-            $fields[] = PageContentField::text("Сотрудник {$n} — имя", "team.{$i}.name", $resource);
-            $fields[] = PageContentField::text("Сотрудник {$n} — должность", "team.{$i}.role", $resource);
+            $fields[] = PageContentField::text("Этап {$n} — номер", "team.{$i}.initial", $resource);
+            $fields[] = PageContentField::text("Этап {$n} — название", "team.{$i}.name", $resource);
+            $fields[] = PageContentField::text("Этап {$n} — описание", "team.{$i}.role", $resource);
         }
 
         return $fields;
@@ -139,9 +139,9 @@ class HomePageFields
 
         for ($i = 0; $i < 5; $i++) {
             $n = $i + 1;
-            $fields[] = PageContentField::text("Отдел {$n} — иконка (emoji)", "departments.{$i}.icon", $resource);
-            $fields[] = PageContentField::text("Отдел {$n} — название", "departments.{$i}.title", $resource);
-            $fields[] = PageContentField::textarea("Отдел {$n} — описание", "departments.{$i}.text", $resource, 2);
+            $fields[] = PageContentField::text("Направление {$n} — иконка (emoji)", "departments.{$i}.icon", $resource);
+            $fields[] = PageContentField::text("Направление {$n} — название", "departments.{$i}.title", $resource);
+            $fields[] = PageContentField::textarea("Направление {$n} — описание", "departments.{$i}.text", $resource, 2);
         }
 
         return $fields;

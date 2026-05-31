@@ -16,7 +16,7 @@ class OrderController extends Controller
         $order = $this->orderService->store($request->validated());
 
         return response()->json([
-            'message' => 'Заявка успешно отправлена. Мы свяжемся с вами в ближайшее время.',
+            'message' => 'Заявка успешно отправлена. Я свяжусь с вами в ближайшее время.',
             'data' => [
                 'id' => $order->id,
             ],

@@ -152,11 +152,18 @@ class Page extends Resource
     protected function contentFields(NovaRequest $request): array
     {
         $resource = $this->resource;
-        $knownSlugs = ['home', 'pricing', 'news', 'articles', 'projects', 'nav-services'];
+        $knownSlugs = ['home', 'pricing', 'reviews', 'news', 'articles', 'projects', 'nav-services'];
+
+        if (! $request->isCreateOrAttachRequest() && $resource?->slug) {
+            $slug = in_array($resource->slug, $knownSlugs, true) ? $resource->slug : 'generic';
+
+            return PageContentField::forResource($resource, $slug);
+        }
 
         $groups = [
             'home' => PageContentField::forResource($resource, 'home'),
             'pricing' => PageContentField::forResource($resource, 'pricing'),
+            'reviews' => PageContentField::forResource($resource, 'reviews'),
             'news' => PageContentField::forResource($resource, 'news'),
             'articles' => PageContentField::forResource($resource, 'articles'),
             'projects' => PageContentField::forResource($resource, 'projects'),

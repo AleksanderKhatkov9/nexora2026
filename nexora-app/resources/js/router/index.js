@@ -7,6 +7,7 @@ import NewsPage from '../components/Page/NewsPage.vue';
 import PricingPage from '../components/Page/PricingPage.vue';
 import ProjectViewPage from '../components/Page/ProjectViewPage.vue';
 import ProjectsPage from '../components/Page/ProjectsPage.vue';
+import ReviewsPage from '../components/Page/ReviewsPage.vue';
 
 export const routes = [
     {
@@ -18,6 +19,11 @@ export const routes = [
         path: '/pricing',
         name: 'pricing',
         component: PricingPage,
+    },
+    {
+        path: '/reviews',
+        name: 'reviews',
+        component: ReviewsPage,
     },
     {
         path: '/projects',

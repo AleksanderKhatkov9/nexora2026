@@ -15,6 +15,7 @@ Route::prefix('page')->controller(IndexController::class)->group(function () {
     Route::get('/footer', 'footer')->name('page.footer');
     Route::get('/home', 'showHome')->name('page.home');
     Route::get('/pricing', 'showPricing')->name('page.pricing');
+    Route::get('/reviews', 'showReviews')->name('page.reviews');
     Route::get('/{slug}', 'show')->name('page.show');
 });
 

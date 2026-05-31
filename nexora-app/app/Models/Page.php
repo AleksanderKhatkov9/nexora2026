@@ -73,6 +73,7 @@ class Page extends Model
         return match ($this->slug) {
             'home' => '/',
             'projects' => '/projects',
+            'reviews' => '/reviews',
             'news' => '/news',
             'articles' => '/articles',
             default => '/'.$this->slug,
@@ -85,6 +86,7 @@ class Page extends Model
             'home' => 'home',
             'projects' => 'projects',
             'pricing' => 'pricing',
+            'reviews' => 'reviews',
             'news' => 'news',
             'articles' => 'articles',
             default => 'page',

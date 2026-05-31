@@ -23,6 +23,11 @@ class PageService
         return $this->getPageDataBySlug('pricing');
     }
 
+    public function getReviewsData(): ?array
+    {
+        return $this->getPageDataBySlug('reviews');
+    }
+
     public function getNavigationData(): array
     {
         return PageNavResource::collection(

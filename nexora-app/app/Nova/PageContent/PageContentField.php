@@ -18,6 +18,7 @@ class PageContentField
         return match ($slug) {
             'home' => HomePageFields::make($resource),
             'pricing' => PricingPageFields::make($resource),
+            'reviews' => ReviewsPageFields::make($resource),
             'news', 'articles', 'projects', 'nav-services' => ListingPageFields::make($slug),
             default => GenericPageFields::make($resource),
         };

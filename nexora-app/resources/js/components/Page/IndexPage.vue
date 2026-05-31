@@ -15,6 +15,7 @@ const { loading, error, page } = useCmsPage(
 
 const sections = computed(() => page.value?.content ?? null);
 const clientSliderItems = computed(() => sections.value?.clients ?? []);
+const processStages = computed(() => sections.value?.team ?? []);
 
 const heroStages = [
     {
@@ -176,6 +177,29 @@ function resetHeroTilt() {
                             <article v-for="benefit in sections.benefits" :key="benefit.title" class="landing-benefit">
                                 <h3>{{ benefit.title }}</h3>
                                 <p>{{ benefit.text }}</p>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+                <section v-if="processStages.length" class="landing-section">
+                    <div class="landing-container">
+                        <h2 class="landing-section__title">Этапы создания приложения</h2>
+                        <p class="landing-section__subtitle">
+                            От идеи до запуска: каждый этап понятен по задачам, результату и следующему шагу.
+                        </p>
+
+                        <div class="landing-process" aria-label="Процесс создания приложения">
+                            <article
+                                v-for="stage in processStages"
+                                :key="stage.initial"
+                                class="landing-process__stage"
+                            >
+                                <span class="landing-process__num">{{ stage.initial }}</span>
+                                <div class="landing-process__content">
+                                    <h3>{{ stage.name }}</h3>
+                                    <p>{{ stage.role }}</p>
+                                </div>
                             </article>
                         </div>
                     </div>

@@ -33,7 +33,7 @@ class HomePageFields
 
             Panel::make('Преимущества', self::benefitFields($resource)),
 
-            Panel::make('Этапы личной работы', self::teamFields($resource)),
+            Panel::make('Этапы создания приложения', self::teamFields($resource)),
 
             Panel::make('Клиенты', [
                 PageContentField::clients('Логотипы / названия клиентов', 'clients', $resource),
@@ -120,7 +120,7 @@ class HomePageFields
     {
         $fields = [];
 
-        for ($i = 0; $i < 4; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $n = $i + 1;
             $fields[] = PageContentField::text("Этап {$n} — номер", "team.{$i}.initial", $resource);
             $fields[] = PageContentField::text("Этап {$n} — название", "team.{$i}.name", $resource);

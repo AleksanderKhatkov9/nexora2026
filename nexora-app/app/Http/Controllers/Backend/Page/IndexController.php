@@ -44,6 +44,17 @@ class IndexController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
+    public function showReviews(): JsonResponse
+    {
+        $data = $this->pageService->getReviewsData();
+
+        if (! $data) {
+            return response()->json(['message' => 'Reviews page not found'], 404);
+        }
+
+        return response()->json(['data' => $data], 200);
+    }
+
     public function navigation(): JsonResponse
     {
         return response()->json([

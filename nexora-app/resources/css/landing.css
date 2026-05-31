@@ -320,6 +320,15 @@ html {
     color: var(--nx-text-muted);
 }
 
+.landing-eyebrow {
+    margin: 0 0 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nx-accent);
+}
+
 /* Project filters */
 .landing-projects-toolbar {
     display: flex;
@@ -1005,6 +1014,74 @@ html {
     color: var(--nx-text-muted);
 }
 
+.landing-process {
+    position: relative;
+    display: grid;
+    gap: 18px;
+}
+
+.landing-process::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    bottom: 28px;
+    left: 24px;
+    width: 2px;
+    background: var(--nx-border);
+}
+
+.landing-process__stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.landing-process__num {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    font-family: var(--nx-font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--nx-accent);
+    background: var(--nx-bg);
+    border: 1px solid rgba(255, 107, 44, 0.32);
+    border-radius: 50%;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.landing-process__content {
+    padding: 22px 24px;
+    background: var(--nx-bg-card);
+    border: 1px solid var(--nx-border);
+    border-radius: var(--nx-radius);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.landing-process__stage:hover .landing-process__content {
+    transform: translateY(-3px);
+    border-color: rgba(255, 107, 44, 0.28);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
+
+.landing-process__content h3 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.landing-process__content p {
+    margin: 0;
+    font-size: 0.92rem;
+    color: var(--nx-text-muted);
+}
+
 .landing-clients-slider {
     position: relative;
     overflow: hidden;
@@ -1390,7 +1467,148 @@ html {
         grid-template-columns: repeat(3, 1fr);
     }
 
+    .landing-process {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+    }
+
+    .landing-process::before {
+        top: 25px;
+        bottom: auto;
+        left: 8%;
+        right: 8%;
+        width: auto;
+        height: 2px;
+    }
+
+    .landing-process__stage {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 16px;
+    }
+
+    .landing-process__content {
+        min-height: 190px;
+        text-align: center;
+    }
+
     .landing-projects-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Reviews */
+.landing-reviews-page {
+    padding: 0 0 80px;
+}
+
+.landing-reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.landing-review-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 28px;
+    background: var(--nx-bg-card);
+    border: 1px solid var(--nx-border);
+    border-radius: var(--nx-radius);
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.landing-review-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 107, 44, 0.28);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
+}
+
+.landing-review-card__quote {
+    position: absolute;
+    top: 10px;
+    right: 22px;
+    font-family: var(--nx-font-display);
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--nx-accent-soft);
+}
+
+.landing-review-card__text {
+    position: relative;
+    flex: 1;
+    margin: 0 0 20px;
+    font-size: 0.98rem;
+    color: var(--nx-text);
+}
+
+.landing-review-card__result {
+    margin-bottom: 22px;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--nx-accent);
+    background: var(--nx-accent-soft);
+    border-radius: 10px;
+}
+
+.landing-review-card__author {
+    display: grid;
+    gap: 2px;
+    padding-top: 18px;
+    border-top: 1px solid var(--nx-border);
+    font-size: 0.86rem;
+    color: var(--nx-text-muted);
+}
+
+.landing-review-card__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--nx-text);
+}
+
+.landing-review-card__author strong {
+    color: var(--nx-text);
+}
+
+.landing-reviews-cta {
+    display: grid;
+    gap: 20px;
+    align-items: center;
+    padding: 28px;
+    background: var(--nx-bg-elevated);
+    border: 1px solid var(--nx-border);
+    border-radius: var(--nx-radius);
+}
+
+.landing-reviews-cta h2 {
+    margin: 0 0 8px;
+    font-family: var(--nx-font-display);
+    font-size: 1.45rem;
+}
+
+.landing-reviews-cta p {
+    margin: 0;
+    color: var(--nx-text-muted);
+}
+
+@media (min-width: 768px) {
+    .landing-reviews-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .landing-reviews-cta {
+        grid-template-columns: 1fr auto;
+    }
+}
+
+@media (min-width: 1024px) {
+    .landing-reviews-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }

@@ -17,6 +17,34 @@ const sections = computed(() => page.value?.content ?? null);
 const clientSliderItems = computed(() => sections.value?.clients ?? []);
 const processStages = computed(() => sections.value?.team ?? []);
 
+const processMeta = [
+    {
+        status: 'Старт проекта',
+        color: '#f97316',
+        soft: 'rgba(249, 115, 22, 0.12)',
+    },
+    {
+        status: 'UX-схема',
+        color: '#2563eb',
+        soft: 'rgba(37, 99, 235, 0.12)',
+    },
+    {
+        status: 'Production',
+        color: '#16a34a',
+        soft: 'rgba(22, 163, 74, 0.12)',
+    },
+    {
+        status: 'Quality check',
+        color: '#7c3aed',
+        soft: 'rgba(124, 58, 237, 0.12)',
+    },
+    {
+        status: 'Релиз',
+        color: '#0891b2',
+        soft: 'rgba(8, 145, 178, 0.12)',
+    },
+];
+
 const heroStages = [
     {
         label: 'Аналитика',
@@ -36,12 +64,22 @@ const heroStages = [
 ];
 
 const activeHeroStage = ref(0);
+const activeProcessStage = ref(0);
 const heroTiltStyle = ref({});
 
 const currentHeroStage = computed(() => heroStages[activeHeroStage.value]);
+const processItems = computed(() => processStages.value.map((stage, index) => ({
+    ...stage,
+    ...(processMeta[index] ?? processMeta[processMeta.length - 1]),
+})));
+const currentProcessStage = computed(() => processItems.value[activeProcessStage.value] ?? processItems.value[0]);
 
 function setHeroStage(index) {
     activeHeroStage.value = index;
+}
+
+function setProcessStage(index) {
+    activeProcessStage.value = index;
 }
 
 function handleHeroPointerMove(event) {
@@ -189,18 +227,44 @@ function resetHeroTilt() {
                             От идеи до запуска: каждый этап понятен по задачам, результату и следующему шагу.
                         </p>
 
-                        <div class="landing-process" aria-label="Процесс создания приложения">
-                            <article
-                                v-for="stage in processStages"
-                                :key="stage.initial"
-                                class="landing-process__stage"
+                        <div class="landing-process-shell">
+                            <div
+                                v-if="currentProcessStage"
+                                class="landing-process-preview"
+                                :style="{
+                                    '--stage-color': currentProcessStage.color,
+                                    '--stage-soft': currentProcessStage.soft,
+                                }"
                             >
-                                <span class="landing-process__num">{{ stage.initial }}</span>
-                                <div class="landing-process__content">
-                                    <h3>{{ stage.name }}</h3>
-                                    <p>{{ stage.role }}</p>
+                                <div class="landing-process-preview__copy">
+                                    <span class="landing-process-preview__status">
+                                        {{ currentProcessStage.status }}
+                                    </span>
+                                    <h3>{{ currentProcessStage.name }}</h3>
+                                    <p>{{ currentProcessStage.role }}</p>
                                 </div>
-                            </article>
+
+                            </div>
+
+                            <div class="landing-process" role="tablist" aria-label="Процесс создания приложения">
+                                <button
+                                    v-for="(stage, index) in processItems"
+                                    :key="stage.initial"
+                                    type="button"
+                                    class="landing-process__stage"
+                                    :class="{ 'is-active': activeProcessStage === index }"
+                                    :style="{ '--stage-color': stage.color, '--stage-soft': stage.soft }"
+                                    role="tab"
+                                    :aria-selected="activeProcessStage === index ? 'true' : 'false'"
+                                    @click="setProcessStage(index)"
+                                >
+                                    <span class="landing-process__num">{{ stage.initial }}</span>
+                                    <span class="landing-process__content">
+                                        <span class="landing-process__status">{{ stage.status }}</span>
+                                        <span class="landing-process__title">{{ stage.name }}</span>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>

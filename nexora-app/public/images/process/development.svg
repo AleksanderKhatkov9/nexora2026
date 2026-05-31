@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" role="img" aria-labelledby="title desc">
+  <title id="title">8709= 8 @07@01>B:0</title>
+  <desc id="desc">;;NAB@0F8O @07@01>B:8 8=B5@D59A0 8 :>40</desc>
+  <rect width="420" height="300" rx="28" fill="#f0fdf4"/>
+  <rect x="54" y="62" width="312" height="178" rx="22" fill="#ffffff" stroke="#86efac" stroke-width="3"/>
+  <rect x="54" y="62" width="312" height="36" rx="18" fill="#22c55e"/>
+  <circle cx="82" cy="80" r="6" fill="#dcfce7"/>
+  <circle cx="104" cy="80" r="6" fill="#dcfce7"/>
+  <circle cx="126" cy="80" r="6" fill="#dcfce7"/>
+  <path d="M128 144l-34 28 34 28" fill="none" stroke="#16a34a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M292 144l34 28-34 28" fill="none" stroke="#16a34a" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M230 130l-40 88" fill="none" stroke="#86efac" stroke-width="12" stroke-linecap="round"/>
+</svg>

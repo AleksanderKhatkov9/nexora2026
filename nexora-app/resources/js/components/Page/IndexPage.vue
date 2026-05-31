@@ -14,6 +14,7 @@ const { loading, error, page } = useCmsPage(
 );
 
 const sections = computed(() => page.value?.content ?? null);
+const clientSliderItems = computed(() => sections.value?.clients ?? []);
 
 const heroStages = [
     {
@@ -185,8 +186,23 @@ function resetHeroTilt() {
                         <h2 class="landing-section__title">Мне доверяют</h2>
                         <p class="landing-section__subtitle">Проекты из e-commerce, финансов, недвижимости, ритейла и B2B.</p>
 
-                        <div class="landing-clients">
-                            <span v-for="client in sections.clients" :key="client" class="landing-client">{{ client }}</span>
+                        <div v-if="clientSliderItems.length" class="landing-clients-slider" aria-label="Компании и проекты">
+                            <div class="landing-clients-slider__track">
+                                <div
+                                    v-for="copyIndex in 2"
+                                    :key="`clients-copy-${copyIndex}`"
+                                    class="landing-clients"
+                                    aria-hidden="true"
+                                >
+                                    <span
+                                        v-for="client in clientSliderItems"
+                                        :key="`${copyIndex}-${client}`"
+                                        class="landing-client"
+                                    >
+                                        {{ client }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
